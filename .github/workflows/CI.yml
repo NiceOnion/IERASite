@@ -19,13 +19,16 @@ jobs:
         node-version: 20
 
     - name: Install dependencies
-      run: cd iera-frontend 
+      run: |
+           cd iera-frontend 
            npm install
 
     - name: Build
-      run: cd iera-frontend 
+      run: |
+           cd iera-frontend 
            npm run build
 
     - name: Run tests
-      run: cd iera-frontend  
+      run: |
+           cd iera-frontend  
            npm test
