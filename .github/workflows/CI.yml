@@ -13,19 +13,19 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v2
 
-    - name: Change directory
-      run: cd iera-frontend
-
     - name: Setup Node.js
       uses: actions/setup-node@v3
       with:
         node-version: 20
 
     - name: Install dependencies
-      run: npm install
+      run: cd iera-frontend 
+           npm install
 
     - name: Build
-      run: npm run build
+      run: cd iera-frontend 
+           npm run build
 
     - name: Run tests
-      run: npm test
+      run: cd iera-frontend  
+           npm test
