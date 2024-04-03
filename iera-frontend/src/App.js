@@ -1,15 +1,34 @@
-import './App.css';
-import LinkButton from './Start/Start';
+import React from 'react';
+import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
+import HomePage from './Pages/HomePage';
+import OtherPage from './Pages/OtherPage';
 
 function App() {
-  return(
-    <>
-      <h1>Welkom op de IERA site!</h1>
-      <br/>
-      <LinkButton to="/AccountPage">Go to account page</LinkButton>
-    </>
-  )
-}
+  return (
+    <Router>
+      <div>
+        <nav>
+          <ul>
+            <li>
+              <Link to="/">Home</Link>
+            </li>
+            <li>
+              <Link to="/other">Other Page</Link>
+            </li>
+          </ul>
+        </nav>
 
+        <Routes>
+          <Route path="/other">
+            <OtherPage />
+          </Route>
+          <Route path="/">
+            <HomePage />
+          </Route>
+        </Routes>
+      </div>
+    </Router>
+  );
+}
 
 export default App;
