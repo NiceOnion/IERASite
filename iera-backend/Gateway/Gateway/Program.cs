@@ -1,25 +1,60 @@
-var builder = WebApplication.CreateBuilder(args);
+using System.IO;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Ocelot.DependencyInjection;
+using Ocelot.Middleware;
 
-// Add services to the container.
-
-builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
-var app = builder.Build();
-
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+namespace Gateway
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    public class Program
+    {
+        public static void Main(string[] args)
+        {
+            Host.CreateDefaultBuilder(args)
+                .ConfigureWebHostDefaults(webBuilder =>
+                {
+                    webBuilder
+                        .UseKestrel()
+                        .UseContentRoot(Directory.GetCurrentDirectory())
+                        .ConfigureAppConfiguration((hostingContext, config) =>
+                        {
+                            config
+                                .SetBasePath(hostingContext.HostingEnvironment.ContentRootPath)
+                                .AddJsonFile("appsettings.json", true, true)
+                                .AddJsonFile($"appsettings.{hostingContext.HostingEnvironment.EnvironmentName}.json", true, true)
+                                .AddJsonFile("ocelot.json")
+                                .AddEnvironmentVariables();
+                        })
+                        .ConfigureServices((hostContext, services) =>
+                        {
+                            services.AddControllers();
+                            services.AddEndpointsApiExplorer();
+                            services.AddSwaggerGen();
+                            services.AddOcelot();
+                        })
+                        .Configure(app =>
+                        {
+                            var env = app.ApplicationServices.GetService<IWebHostEnvironment>();
+                            if (env.IsDevelopment())
+                            {
+                                app.UseSwagger();
+                                app.UseSwaggerUI();
+                            }
+
+                            app.UseHttpsRedirection();
+                            app.UseAuthorization();
+                            app.UseRouting();
+                            app.UseEndpoints(endpoints =>
+                            {
+                                endpoints.MapControllers();
+                            });
+                            app.UseOcelot().Wait();
+                        });
+                })
+                .Build()
+                .Run();
+        }
+    }
 }
-
-app.UseHttpsRedirection();
-
-app.UseAuthorization();
-
-app.MapControllers();
-
-app.Run();

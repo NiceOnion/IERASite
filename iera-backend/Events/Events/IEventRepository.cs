@@ -2,8 +2,8 @@
 {
     public interface IEventRepository
     {
-        public Task<Event[]> GetAllEvents();
-        public Task<Event> GetOneEvent();
-        public void Create();
+        public Task<List<Event>> GetAllEvents();
+        public Task<Event> GetOneEvent(string? name);
+        public void Create(Event NewEvent);
     }
 }

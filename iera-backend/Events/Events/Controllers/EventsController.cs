@@ -2,49 +2,34 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Events.Controllers
 {
+    [Route("api/[controller]")]
     [ApiController]
     public class EventsController : ControllerBase
     {
-        private Event[] Eventlist = new[]
-        {
-            new Event("Borrel", "Dit is een borrel", "Morgen"),
-            new Event("DnD", "Dit is een bordspel avond", "Gister"),
-            new Event("Pizavrijdag", "Tijd voor pizza", "Elke vrijdag")
-        };
+        private readonly IEventRepository _eventrepository;
 
-        private readonly ILogger<EventsController> _logger;
-
-        public EventsController(ILogger<EventsController> logger)
+        public EventsController(IEventRepository eventrepos)
         {
-            _logger = logger;
+            _eventrepository = eventrepos;
         }
 
         [HttpGet]
-        [Route("GetAll")]
-        public Event[] GetAll()
-        {
-            return Eventlist;
+        public async Task<ActionResult<List<Event>>> GetAll(){
+            return await _eventrepository.GetAllEvents();
         }
 
-        [HttpPost]
+        /*[HttpPost]
         [Route("GetOne")]
-        public Event GetOne(string? name)
+        public async Task<Event> GetOne(string? name)
         {
-            foreach (Event Event in Eventlist) 
-            { 
-                if (Event.Name == name) 
-                { 
-                return Event;
-                }
-            }
-            return (null);
-        }
+            return await _eventrepository.GetOneEvent(name);
+        }*/
 
         [HttpPost]
         [Route("Create")]
         public void Create(Event NewEvent)
         {
-            Eventlist.Append(NewEvent);
+            _eventrepository.Create(NewEvent);
         }
     }
 }

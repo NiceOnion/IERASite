@@ -38,17 +38,11 @@
             return Task.FromResult(EventList);
         }
 
-        public Task<Event> GetOneEvent(string name)
+        public Task<Event> GetOneEvent(string? name)
         {
-            return Task.Run(() =>
-            {
-                foreach (Event Item in EventList)
-                {
-                    if (Item.Name == name)
-                    {
-                        return Item;
-                    }
-                }});
+            throw new NotImplementedException();
         }
+
+
     }
 }

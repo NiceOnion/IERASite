@@ -1,0 +1,37 @@
+{
+    "Routes":[
+        {
+            
+        "DownstreamPathTemplate":"/api/Event",
+        "DownstreamScheme": "http",
+        "DownstreamHostAndPorts":
+        [
+            {
+                "Host":"localhost",
+                "Port": "20057"
+            }
+        ],
+        "UpstreamPathTemplate":"/Event",
+        "UpstreamHttpMethod":
+        [
+            "GET"
+        ]
+        },
+        {
+            "DownstreamPathTemplate": "/api/Announcement",
+            "DownstreamScheme":"http",
+            "DownstreamHostAndPorts":[
+                {
+                    "Host":"localhost",
+                    "Port":"32345"
+                }
+            ],
+            "UpstreamPathTemplate":"/Announcement",
+            "UpstreamHttpMethod":[
+                "GET"
+            ]
+        }
+
+
+    ]
+}
