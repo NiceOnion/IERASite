@@ -1,35 +1,37 @@
 ﻿{
   "Routes": [
     {
-
-      "DownstreamPathTemplate": "/api/Event",
-      "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": "20057"
-        }
-      ],
       "UpstreamPathTemplate": "/Event",
       "UpstreamHttpMethod": [
-        "GET"
-      ]
-    },
-    {
-      "DownstreamPathTemplate": "/api/Announcement",
-      "DownstreamScheme": "http",
+        "Get"
+      ],
+      "DownstreamPathTemplate": "/api/Event",
+      "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": "32345"
+          "Port": "32776"
         }
-      ],
+      ]
+    },
+
+    {
       "UpstreamPathTemplate": "/Announcement",
       "UpstreamHttpMethod": [
         "GET"
+      ],
+      "DownstreamPathTemplate": "/api/Announcement",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": "32774"
+        }
       ]
     }
 
-
-  ]
+  ],
+  "GlobalConfiguration": {
+    "BaseUrl":  "https://localhost:32778"
+  }
 }

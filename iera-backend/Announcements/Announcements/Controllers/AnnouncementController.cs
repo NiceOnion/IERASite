@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 
 namespace Announcements.Controllers
 {
+    [Route("api/[controller]")]
     [ApiController]
     public class AnnouncementController : ControllerBase
     {
@@ -13,7 +14,6 @@ namespace Announcements.Controllers
         }
 
         [HttpGet]
-        [Route("GetAll")]
         public async Task<ActionResult<List<Announcement>>> GetAllAnnouncements(){
             return await _announcementrepository.GetAllAnnouncements();
         }

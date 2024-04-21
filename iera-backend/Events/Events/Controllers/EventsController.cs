@@ -26,7 +26,6 @@ namespace Events.Controllers
         }*/
 
         [HttpPost]
-        [Route("Create")]
         public void Create(Event NewEvent)
         {
             _eventrepository.Create(NewEvent);
