@@ -3,14 +3,14 @@ services:
   gateway:
     build:
       context: .
-      dockerfile: Gateway/Dockerfile-Gateway
+      dockerfile: Gateway/Gateway/Dockerfile
     ports:
       - "8000:80"
   events:
     build:
       context: .
-      dockerfile: Events/Dockerfile-Events
+      dockerfile: Events/Events/Dockerfile
   announcements:
     build:
       context: .
-      dockerfile: Announcements/Dockerfile-Announcements
+      dockerfile: Announcements/Announcements/Dockerfile
