@@ -6,15 +6,15 @@ EXPOSE 443
 
 # Build stage
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
-WORKDIR /src
-COPY ["Gateway/Gateway/Gateway.csproj", "Gateway/"]
+WORKDIR "/src/iera-backend/Gateway/Gateway"
+COPY ["Gateway.csproj", "Gateway/"]
 RUN dotnet restore "Gateway/Gateway.csproj"
 COPY . .
 
 # Create the /app/build directory with correct permissions
 RUN mkdir -p /app/build && chmod -R 777 /app/build
 
-WORKDIR "/src/Gateway"
+WORKDIR "/src/iera-backend/Gateway/Gateway"
 RUN dotnet build "Gateway.csproj" -c Release -o /app/build
 
 # Publish stage

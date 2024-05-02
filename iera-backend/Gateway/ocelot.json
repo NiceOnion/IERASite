@@ -7,8 +7,8 @@
         "DownstreamHostAndPorts":
         [
             {
-                "Host":"localhost",
-                "Port": "20057"
+                "Host":"Events",
+                "Port": "32774"
             }
         ],
         "UpstreamPathTemplate":"/Event",
@@ -22,8 +22,8 @@
             "DownstreamScheme":"http",
             "DownstreamHostAndPorts":[
                 {
-                    "Host":"localhost",
-                    "Port":"32345"
+                    "Host":"Announcements",
+                    "Port":"32770"
                 }
             ],
             "UpstreamPathTemplate":"/Announcement",
