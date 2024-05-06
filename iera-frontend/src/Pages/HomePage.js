@@ -1,11 +1,13 @@
 import React from 'react';
 import { Link } from 'react-router-dom'; // Import Link from react-router-dom
 import Routingbutton from '../FunctionalComponents/Routingbutton';
+import GetAllAnnouncements from '../Data/AnnouncementDAL';
+
 
 // Dashboard component
 function Dashboard({ announcements }) {
-  console.log(announcements)
-  
+  GetAllAnnouncements()
+
   return (
     <div>
       <h3>thuispagina</h3>

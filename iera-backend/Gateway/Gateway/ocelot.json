@@ -10,7 +10,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "Events",
-          "Port": "32774"
+          "Port": 32774
         }
       ]
     },
@@ -25,7 +25,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "Announcements",
-          "Port": "32770"
+          "Port": 32772
         }
       ]
     }
