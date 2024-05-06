@@ -1,0 +1,22 @@
+# Please refer https://aka.ms/HTTPSinContainer on how to setup an https developer certificate for your ASP.NET Core service.
+
+version: '3.4'
+
+services:
+  announcements:
+    image: announcements
+    build:
+      context: .
+      dockerfile: iera-backend/Announcements/Announcements/Dockerfile
+
+  gateway:
+    image: gateway
+    build:
+      context: .
+      dockerfile: iera-backend/Gateway/Gateway/Dockerfile
+
+  events:
+    image: events
+    build:
+      context: .
+      dockerfile: iera-backend/Events/Events/Dockerfile

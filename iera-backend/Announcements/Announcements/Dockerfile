@@ -1,27 +1,24 @@
-# Base image
 FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS base
 WORKDIR /app
-EXPOSE 80
-EXPOSE 443
 
-# Build stage
-FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
+# Creates a non-root user with an explicit UID and adds permission to access the /app folder
+# For more info, please refer to https://aka.ms/vscode-docker-dotnet-configure-containers
+RUN adduser -u 5678 --disabled-password --gecos "" appuser && chown -R appuser /app
+USER appuser
+
+FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:6.0 AS build
+ARG configuration=Release
 WORKDIR /src
-COPY ["Announcements/Announcements/Announcements.csproj", "Announcements/"]
-RUN dotnet restore "Announcements/Announcements.csproj"
+COPY ["iera-backend/Announcements/Announcements/Announcements.csproj", "iera-backend/Announcements/Announcements/"]
+RUN dotnet restore "iera-backend/Announcements/Announcements/Announcements.csproj"
 COPY . .
-WORKDIR "/src/Announcements/Announcements"
-RUN dotnet build "Announcements.csproj" -c Release -o /app/build
+WORKDIR "/src/iera-backend/Announcements/Announcements"
+RUN dotnet build "Announcements.csproj" -c $configuration -o /app/build
 
-# Change ownership of the /app/build directory to allow writing during the build process
-USER root
-RUN chown -R nobody:nogroup /app/build
-
-# Publish stage
 FROM build AS publish
-RUN dotnet publish "Announcements.csproj" -c Release -o /app/publish /p:UseAppHost=false
+ARG configuration=Release
+RUN dotnet publish "Announcements.csproj" -c $configuration -o /app/publish /p:UseAppHost=false
 
-# Final stage
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
