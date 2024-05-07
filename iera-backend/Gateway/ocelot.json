@@ -7,7 +7,8 @@
         "DownstreamHostAndPorts":
         [
             {
-                "Host":"ierasite-events-1"
+                "Host":"events-1",
+                "Port": 32774
             }
         ],
         "UpstreamPathTemplate":"/Event",
@@ -21,7 +22,8 @@
             "DownstreamScheme":"http",
             "DownstreamHostAndPorts":[
                 {
-                    "Host":"ierasite-announcements-1"
+                    "Host": "announcements-1",
+                    "Port": 32772
                 }
             ],
             "UpstreamPathTemplate":"/Announcement",
@@ -29,7 +31,5 @@
                 "GET"
             ]
         }
-
-
     ]
 }

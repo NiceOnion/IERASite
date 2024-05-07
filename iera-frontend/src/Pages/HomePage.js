@@ -6,7 +6,7 @@ import GetAllAnnouncements from '../Data/AnnouncementDAL';
 
 // Dashboard component
 function Dashboard({ announcements }) {
-  GetAllAnnouncements()
+ // GetAllAnnouncements()
 
   return (
     <div>
