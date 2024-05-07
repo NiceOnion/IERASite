@@ -1,35 +1,33 @@
 ﻿{
   "Routes": [
     {
-      "UpstreamPathTemplate": "/Event",
-      "UpstreamHttpMethod": [
-        "Get"
-      ],
       "DownstreamPathTemplate": "/api/Event",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
           "Host": "Events",
           "Port": 32774
         }
+      ],
+      "UpstreamPathTemplate": "/Event",
+      "UpstreamHttpMethod": [
+        "Get"
       ]
     },
-
     {
+      "DownstreamPathTemplate": "/api/Announcement",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 32772
+        }
+      ],
       "UpstreamPathTemplate": "/Announcement",
       "UpstreamHttpMethod": [
         "GET"
-      ],
-      "DownstreamPathTemplate": "/api/Announcement",
-      "DownstreamScheme": "https",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "Announcements",
-          "Port": 32772
-        }
       ]
     }
-
   ],
   "GlobalConfiguration": {
   }

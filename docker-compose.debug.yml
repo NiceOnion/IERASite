@@ -10,25 +10,9 @@ services:
       dockerfile: iera-backend/Announcements/Announcements/Dockerfile
       args:
         - configuration=Debug
-    volumes:
-      - ~/.vsdbg:/remote_debugger:rw
-
-  events:
-    image: events
-    build:
-      context: .
-      dockerfile: iera-backend/Events/Events/Dockerfile
-      args:
-        - configuration=Debug
-    volumes:
-      - ~/.vsdbg:/remote_debugger:rw
-
-  gateway:
-    image: gateway
-    build:
-      context: .
-      dockerfile: iera-backend/Gateway/Gateway/Dockerfile
-      args:
-        - configuration=Debug
+    ports:
+      - 32772:32772
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
     volumes:
       - ~/.vsdbg:/remote_debugger:rw

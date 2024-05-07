@@ -3,30 +3,18 @@
 version: '3.4'
 
 services:
-  announcements:
-    image: announcements
-    ports:
-      - 32772:32772
-    build:
-      context: .
-      dockerfile: iera-backend/Announcements/Announcements/Dockerfile
-    environment:
-      - ASPNETCORE_URLS=http:+:32772
-
   gateway:
     image: gateway
-    ports:
-      - 32770:32770
     build:
       context: .
       dockerfile: iera-backend/Gateway/Gateway/Dockerfile
-
-  events:
-    image: events
     ports:
-      - 32774:32774
-    build:
+      - 32770:32770
+  
+  announcements:
+    image: announcements
+    build: 
       context: .
-      dockerfile: iera-backend/Events/Events/Dockerfile
-    environment:
-      - ASPNETCORE_URLS=http:+:32774
+      dockerfile: iera-backend/Announcements/Announcements/Dockerfile
+    ports:
+      - 32772:32772
