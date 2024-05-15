@@ -1,4 +1,4 @@
-name: Containerization
+name: CD-pipeline
 
 on:
   push:
@@ -37,3 +37,11 @@ jobs:
 
     - name: start minikube
       run: minikube start
+
+    - name: update images used in kubernetes
+      run: |
+         kubectl set image deployment/announcement-service ierasite=niceonion/ierasite:announcements-latest
+         kubectl set image deployment/gateway-service ierasite=niceonion/ierasite:gateway-latest
+
+    - name: stop minikube
+      run: minikube stop
