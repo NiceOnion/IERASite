@@ -38,6 +38,9 @@ jobs:
     - name: start minikube
       run: minikube start
 
+    - name: check deployments
+      run: kubectl get deployments
+
     - name: update images used in kubernetes
       run: |
          kubectl set image deployment/announcement-service ierasite=niceonion/ierasite:announcements-latest
