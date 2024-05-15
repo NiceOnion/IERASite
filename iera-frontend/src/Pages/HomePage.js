@@ -1,7 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom'; // Import Link from react-router-dom
 import Routingbutton from '../FunctionalComponents/Routingbutton';
-import GetAllAnnouncements from '../Data/AnnouncementDAL';
 
 
 // Dashboard component

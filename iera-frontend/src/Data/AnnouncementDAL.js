@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import APIAdress from "./APIAdress"
 
 function GetAllAnnouncements(){
