@@ -32,5 +32,5 @@ jobs:
       run: |
         docker tag gateway:latest niceonion/ierasite:gateway_latest
         docker push niceonion/ierasite:gateway_latest
-        docker tag announcement:latest niceonion/ierasite:gateway-latest
-        docker push niceonion/ierasite:announcement-latest
+        docker tag announcements:latest niceonion/ierasite:announcements-latest
+        docker push niceonion/ierasite:announcements-latest
