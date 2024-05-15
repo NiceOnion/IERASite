@@ -23,9 +23,12 @@ jobs:
            cd iera-frontend 
            npm install
 
+    - name: check
+      run: cd
+    
     - name: Build
       run: |
-           cd
+           cd iera-frontend
            npm run build
 
     - name: Run tests
