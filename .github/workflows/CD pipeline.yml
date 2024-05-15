@@ -34,17 +34,3 @@ jobs:
         docker push niceonion/ierasite:gateway-latest
         docker tag announcements:latest niceonion/ierasite:announcements-latest
         docker push niceonion/ierasite:announcements-latest
-
-    - name: start minikube
-      run: minikube start
-
-    - name: check deployments
-      run: kubectl get deployments
-
-    - name: update images used in kubernetes
-      run: |
-         kubectl set image deployment/announcement-service ierasite=niceonion/ierasite:announcements-latest
-         kubectl set image deployment/gateway-service ierasite=niceonion/ierasite:gateway-latest
-
-    - name: stop minikube
-      run: minikube stop
