@@ -31,6 +31,6 @@ jobs:
     - name: Tag and Push Docker images to Docker Hub
       run: |
         docker tag gateway:latest niceonion/ierasite:gateway-latest
-        docker push niceonion/ierasite:gateway_latest
+        docker push niceonion/ierasite:gateway-latest
         docker tag announcements:latest niceonion/ierasite:announcements-latest
         docker push niceonion/ierasite:announcements-latest
