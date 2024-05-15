@@ -34,3 +34,6 @@ jobs:
         docker push niceonion/ierasite:gateway-latest
         docker tag announcements:latest niceonion/ierasite:announcements-latest
         docker push niceonion/ierasite:announcements-latest
+
+    - name: start minikube
+      run: minikube start
