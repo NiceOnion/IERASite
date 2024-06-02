@@ -1,4 +1,4 @@
-name: CI-backend
+name: CI-Backend
 
 on:
   push:
@@ -48,10 +48,12 @@ jobs:
     - name: Publish services
       run: |
         cd iera-backend/Gateway
-        dotnet publish -c Release -o publish
+        for project in Announcements Events Gateway; do
+          dotnet publish $project/$project.csproj -c Release -o publish/$project
+        done
 
     - name: Upload build artifacts
       uses: actions/upload-artifact@v3
       with:
         name: published-services
-        path: src/Services/*/publish
+        path: iera-backend/Gateway/publish/**/*
