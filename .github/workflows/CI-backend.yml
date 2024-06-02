@@ -28,8 +28,7 @@ jobs:
         dotnet-version: ${{ matrix.dotnet-version }}
 
     - name: Set Directory
-      run: cd iera-backend
-           cd gateway
+      run: cd iera-backend/Gateway
 
     - name: Restore dependencies
       run: dotnet restore
