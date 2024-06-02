@@ -48,9 +48,7 @@ jobs:
     - name: Publish services
       run: |
         cd iera-backend/Gateway
-        for project in Announcements Events Gateway; do
-          dotnet publish $project/$project/$project.csproj -c Release -o publish/$project
-        done
+        dotnet publish -c Release
 
     - name: Upload build artifacts
       uses: actions/upload-artifact@v3
