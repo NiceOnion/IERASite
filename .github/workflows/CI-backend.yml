@@ -1,0 +1,52 @@
+name: CI-backend
+
+on:
+  push:
+    branches:
+      - main
+      - 'release/*'
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        dotnet-version: [6.0.x]
+        os: [ubuntu-latest]
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: ${{ matrix.dotnet-version }}
+
+    - name: Set Directory
+      run: CD iera-backend/gateway
+
+    - name: Restore dependencies
+      run: dotnet restore
+
+    - name: Build solution
+      run: dotnet build --no-restore --configuration Release
+
+    - name: Run tests
+      run: dotnet test --no-build --verbosity normal --configuration Release
+
+    - name: Publish services
+      run: |
+        for d in src/Services/*/ ; do
+          (cd "$d" && dotnet publish -c Release -o publish)
+        done
+
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: published-services
+        path: src/Services/*/publish
