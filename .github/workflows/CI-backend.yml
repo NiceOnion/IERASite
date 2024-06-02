@@ -49,7 +49,7 @@ jobs:
       run: |
         cd iera-backend/Gateway
         for project in Announcements Events Gateway; do
-          dotnet publish $project/$project.csproj -c Release -o publish/$project
+          dotnet publish $project/$project/$project.csproj -c Release -o publish/$project
         done
 
     - name: Upload build artifacts
