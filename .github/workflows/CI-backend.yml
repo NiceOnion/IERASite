@@ -31,13 +31,19 @@ jobs:
       run: cd iera-backend/Gateway
 
     - name: Restore dependencies
-      run: dotnet restore
+      run: | 
+        cd iera-backend/Gateway
+        dotnet restore
 
     - name: Build solution
-      run: dotnet build --no-restore --configuration Release
+      run: |
+        cd iera-backend/Gateway
+        dotnet build --no-restore --configuration Release
 
     - name: Run tests
-      run: dotnet test --no-build --verbosity normal --configuration Release
+      run: |
+        cd iera-backend/Gateway
+        dotnet test --no-build --verbosity normal --configuration Release
 
     - name: Publish services
       run: |
