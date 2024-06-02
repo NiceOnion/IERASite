@@ -47,9 +47,8 @@ jobs:
 
     - name: Publish services
       run: |
-        for d in src/Services/*/ ; do
-          (cd "$d" && dotnet publish -c Release -o publish)
-        done
+        cd iera-backend/Gateway
+        dotnet publish -c Release -o publish
 
     - name: Upload build artifacts
       uses: actions/upload-artifact@v3
