@@ -1,16 +1,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: Accounts
+  name: Announcements
 spec:
   replicas: 3
   selector:
     matchLabels:
-      app: Accounts
+      app: Announcements
   template:
     metadata:
       labels:
-        app: Accounts
+        app: Announcements
     spec:
       containers:
       - name: Announcements

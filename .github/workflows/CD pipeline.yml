@@ -2,7 +2,7 @@ name: CD-pipeline
 
 on:
   workflow_run:
-    workflows: ["CI-Frontend","CI-Backend"]
+    workflows: ["CI-Backend"]
     types: 
       - completed
 
@@ -58,10 +58,10 @@ jobs:
         
       - name: Deploy to Kubernetes
         run: |
-            kubectl apply -f k8s/deployments/deployment-announcement.yaml
-            kubectl apply -f k8s/deployments/deployment-user.yaml
-            kubectl apply -f k8s/services/announcement.yaml
-            kubectl apply -f k8s/services/user.yaml
+            kubectl apply -f k8s/deployments/deployment-announcements.yaml
+            kubectl apply -f k8s/deployments/deployment-users.yaml
+            kubectl apply -f k8s/services/announcements.yaml
+            kubectl apply -f k8s/services/users.yaml
             kubectl apply -f k8s/ingress.yaml
-            kubectl apply -f k8s/hpa/hpa-announcement.yaml
-            kubectl apply -f k8s/hpa/hpa-user.yaml
+            kubectl apply -f k8s/hpa/hpa-announcements.yaml
+            kubectl apply -f k8s/hpa/hpa-users.yaml
