@@ -54,16 +54,36 @@ jobs:
       - name: Start minikube
         uses: medyagh/setup-minikube@master
 
-      - name: List files in Kubernetes/Services
-        run: ls -al Kubernetes
+      - name: Set up Docker environment for Minikube
+        run: |
+          export SHELL=/bin/bash
+          eval $(minikube -p minikube docker-env)
 
-        
+      - name: Build Docker images for Minikube
+        run: |
+          docker build -f ./Dockerfile -t local/gateway .
+          docker build -f ./Dockerfile -t local/announcements .
+          docker build -f ./Dockerfile -t local/users .
+          echo -n "Verifying images:"
+          docker images
+
       - name: Deploy to Kubernetes
         run: |
-            kubectl apply -f Kubernetes/Deployments/announcements-deployment.yaml
-            kubectl apply -f Kubernetes/Deployments/users-deployment.yaml
-            kubectl apply -f Kubernetes/Services/announcements.yaml
-            kubectl apply -f Kubernetes/Services/users.yaml
-            kubectl apply -f Kubernetes/Ingress.yaml
-            kubectl apply -f Kubernetes/HPA/hpa-announcements.yaml
-            kubectl apply -f Kubernetes/HPA/hpa-users.yaml
+          kubectl apply -f Kubernetes/Deployments/announcements-deployment.yaml
+          kubectl apply -f Kubernetes/Deployments/users-deployment.yaml
+          kubectl apply -f Kubernetes/Services/announcements.yaml
+          kubectl apply -f Kubernetes/Services/users.yaml
+          kubectl apply -f Kubernetes/Ingress.yaml
+          kubectl apply -f Kubernetes/HPA/hpa-announcements.yaml
+          kubectl apply -f Kubernetes/HPA/hpa-users.yaml
+
+      - name: Verify deployment
+        run: kubectl rollout status deployment/announcements && kubectl rollout status deployment/users
+
+      - name: Test service URLs
+        run: |
+          minikube service list
+          echo "------------------announcements service URL------------------"
+          curl $(minikube service announcements --url)
+          echo "------------------users service URL------------------"
+          curl $(minikube service users --url)
