@@ -13,7 +13,7 @@ spec:
         app: announcements
     spec:
       containers:
-      - name: Announcements
+      - name: announcements
         image: Niceonion/ierasite:announcements-latest
         ports:
         - containerPort: 32772
