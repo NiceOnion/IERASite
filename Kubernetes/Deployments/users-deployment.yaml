@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: Users
+  name: users
 spec:
   replicas: 3
   selector:
     matchLabels:
-      app: Users
+      app: users
   template:
     metadata:
       labels:
-        app: Users
+        app: users
     spec:
       containers:
-      - name: Users
+      - name: users
         image: niceonion/ierasite:users-latest
         ports:
         - containerPort: 32776
