@@ -53,6 +53,10 @@ jobs:
         
       - name: Start minikube
         uses: medyagh/setup-minikube@master
+
+      - name: List files in Kubernetes/Services
+        run: ls -al Kubernetes
+
         
       - name: Deploy to Kubernetes
         run: |
