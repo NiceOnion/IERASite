@@ -51,10 +51,8 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
         
-      - name: Setup kubectl
-        uses: azure/setup-kubectl@v1
-        with:
-          version: 'v1.30.0'
+      - name: Start minikube
+        uses: medyagh/setup-minikube@master
         
       - name: Deploy to Kubernetes
         run: |
