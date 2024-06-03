@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: Accounts
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: Accounts
+  template:
+    metadata:
+      labels:
+        app: Accounts
+    spec:
+      containers:
+      - name: Announcements
+        image: Niceonion/ierasite:announcements-latest
+        ports:
+        - containerPort: 32772
