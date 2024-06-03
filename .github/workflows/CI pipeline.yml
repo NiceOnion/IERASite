@@ -1,37 +1,41 @@
-name: CI-Pipeline
+name: CI-Frontend
 
 on:
-  push:
-    branches:
-      - main
+    push:
+        branches: 
+            - main
+    pull_request:
+        branches:
+            - main
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
+    Build:
+        runs-on: ubuntu-latest
 
-    steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
+        steps:
+            - uses: actions/checkout@v3
+            - name: Setup Node.js
+              uses: actions/setup-node@v3
+              with:
+                node-version: 20
 
-    - name: Setup Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: 20
+            - name: Install dependencies
+              run: |
+                cd iera-frontend
+                npm install
 
-    - name: Install dependencies
-      run: |
-           cd iera-frontend 
-           npm install
+            - name: Build
+              run: |
+                cd iera-frontend
+                npm run build
 
-    - name: check
-      run: cd
-    
-    - name: Build
-      run: |
-           cd iera-frontend
-           npm run build
+            - name: Run tests
+              run: |
+                cd iera-frontend  
 
-    - name: Run tests
-      run: |
-           cd iera-frontend  
-           npm test
+            - name: SonarCloud Scan
+              uses: SonarSource/sonarcloud-github-action@master
+              env:
+                GITHUB_TOKEN_RW: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
+                SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+

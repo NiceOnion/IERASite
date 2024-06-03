@@ -6,29 +6,73 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "Events",
-          "Port": 32774
+          "Port": 32704
         }
       ],
       "UpstreamPathTemplate": "/Event",
-      "UpstreamHttpMethod": [
-        "Get"
-      ]
+      "UpstreamHttpMethod": [ "GET" ]
     },
     {
-      "DownstreamPathTemplate": "/api/Announcement",
-      "DownstreamScheme": "http",
+      "DownstreamPathTemplate": "/api/Announcement/All",
+      "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 32772
+          "Port": 7103
         }
       ],
       "UpstreamPathTemplate": "/Announcement",
-      "UpstreamHttpMethod": [
-        "GET"
-      ]
+      "UpstreamHttpMethod": [ "GET" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/Announcement/{id}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7103
+        }
+      ],
+      "UpstreamPathTemplate": "/Announcement/{id}",
+      "UpstreamHttpMethod": [ "GET", "DELETE", "PUT" ],
+      "SwaggerKey": "Announcement.API"
+    },
+    {
+      "DownstreamPathTemplate": "/api/Announcement",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7103
+        }
+      ],
+      "UpstreamPathTemplate": "/Announcement",
+      "UpstreamHttpMethod": [ "POST" ]
     }
   ],
   "GlobalConfiguration": {
-  }
+   "BaseUrl": "https://localhost:7011"
+  },
+  "SwaggerEndPoints": [
+    {
+      "Key": "Events.API",
+      "Config": [
+        {
+          "Name": "Events",
+          "Version": "v1",
+          "Url": "http://Events:32704/swagger/v1/swagger.json"
+        }
+      ]
+    },
+    {
+      "Key": "Announcements.API",
+      "Config": [
+        {
+          "Name": "Announcements",
+          "Version": "v1",
+          "Url": "https://localhost:7103/swagger/v1/swagger.json"
+        }
+      ]
+    }
+  ]
 }
