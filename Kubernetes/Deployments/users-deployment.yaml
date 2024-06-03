@@ -16,4 +16,4 @@ spec:
       - name: users
         image: niceonion/ierasite:users-latest
         ports:
-        - containerPort: 32776
+        - containerPort: 32773

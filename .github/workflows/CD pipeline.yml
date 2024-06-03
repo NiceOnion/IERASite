@@ -40,8 +40,8 @@ jobs:
     
     - name: Tag and Push users
       run: |    
-          docker tag users:latest niceonion/ierasite:users-latest
-          docker push niceonion/ierasite:users-latest
+        docker tag users:latest niceonion/ierasite:users-latest
+        docker push niceonion/ierasite:users-latest
 
   deploy:
     runs-on: ubuntu-latest

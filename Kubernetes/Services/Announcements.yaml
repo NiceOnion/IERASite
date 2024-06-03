@@ -1,11 +1,12 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: announcements
+  name: announcements-service
 spec:
   selector:
     app: announcements
   ports:
-    - protocol: TCP
-      port: 32772
-      targetPort: 32772
+  - protocol: TCP
+    port: 32772
+    targetPort: 32772
+  type: LoadBalancer

@@ -14,6 +14,6 @@ spec:
     spec:
       containers:
       - name: announcements
-        image: Niceonion/ierasite:announcements-latest
+        image: niceonion/ierasite:announcements-latest
         ports:
         - containerPort: 32772
