@@ -14,7 +14,7 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       
     - name: Set up Docker Compose
       run: docker-compose -v
@@ -58,10 +58,10 @@ jobs:
         
       - name: Deploy to Kubernetes
         run: |
-            kubectl apply -f k8s/deployments/deployment-announcements.yaml
-            kubectl apply -f k8s/deployments/deployment-users.yaml
-            kubectl apply -f k8s/services/announcements.yaml
-            kubectl apply -f k8s/services/users.yaml
-            kubectl apply -f k8s/ingress.yaml
-            kubectl apply -f k8s/hpa/hpa-announcements.yaml
-            kubectl apply -f k8s/hpa/hpa-users.yaml
+            kubectl apply -f kubernetes/deployments/deployment-announcements.yaml
+            kubectl apply -f kubernetes/deployments/deployment-users.yaml
+            kubectl apply -f kubernetes/services/announcements.yaml
+            kubectl apply -f kubernetes/services/users.yaml
+            kubectl apply -f kubernetes/ingress.yaml
+            kubectl apply -f kubernetes/hpa/hpa-announcements.yaml
+            kubectl apply -f kubernetes/hpa/hpa-users.yaml
