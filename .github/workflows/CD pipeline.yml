@@ -62,7 +62,7 @@ jobs:
         run: |
             kubectl apply -f Kubernetes/Deployments/announcements-deployment.yaml
             kubectl apply -f Kubernetes/Deployments/users-deployment.yaml
-            kubectl apply -f Kubernetes/Services/announcements.yaml
+            kubectl apply -f Kubernetes/Services/Announcements.yaml
             kubectl apply -f Kubernetes/Services/users.yaml
             kubectl apply -f Kubernetes/Ingress.yaml
             kubectl apply -f Kubernetes/HPA/hpa-announcements.yaml
