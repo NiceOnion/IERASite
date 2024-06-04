@@ -103,3 +103,7 @@ jobs:
             kubectl apply -f Kubernetes/Ingress.yaml
             kubectl apply -f Kubernetes/HPA/hpa-announcements.yaml
             kubectl apply -f Kubernetes/HPA/hpa-users.yaml
+
+      - name: Test service URLs
+        run: |
+            minikube service list 
