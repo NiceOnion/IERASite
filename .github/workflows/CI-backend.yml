@@ -104,6 +104,19 @@ jobs:
             kubectl apply -f Kubernetes/HPA/hpa-announcements.yaml
             kubectl apply -f Kubernetes/HPA/hpa-users.yaml
 
+      - name: troubleshooting
+        run: |
+          kubectl get pods
+          kubectl describe service announcements-service
+          kubectl describe pod announcements-service
+          kubectl logs announcements-service
+          kubectl get deployments
+          kubectl describe deployment announcements
+          
+
+
+
+
       - name: Test service URLs
         run: |
             minikube service list 
