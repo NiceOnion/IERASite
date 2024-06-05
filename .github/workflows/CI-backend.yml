@@ -109,7 +109,6 @@ jobs:
           kubectl get pods
           kubectl describe service announcements-service
           kubectl describe pod announcements
-          kubectl logs announcements
           kubectl get deployments
           kubectl describe deployment announcements
           
