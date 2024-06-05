@@ -108,8 +108,8 @@ jobs:
         run: |
           kubectl get pods
           kubectl describe service announcements-service
-          kubectl describe pod announcements-service
-          kubectl logs announcements-service
+          kubectl describe pod announcements
+          kubectl logs announcements
           kubectl get deployments
           kubectl describe deployment announcements
           
