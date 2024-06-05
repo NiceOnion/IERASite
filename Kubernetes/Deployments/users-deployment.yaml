@@ -17,3 +17,8 @@ spec:
         image: niceonion/ierasite:users-latest
         ports:
         - containerPort: 32773
+        resources:
+          requests:
+            cpu: "100m"
+          limits:
+            cpu: "200m"
