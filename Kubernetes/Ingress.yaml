@@ -2,6 +2,8 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
   rules:
   - host: iera.nl
@@ -13,11 +15,18 @@ spec:
           service:
             name: announcements-service
             port:
-              number: 32772
+              number: 32772  # Assuming 80 is the service port defined in the service YAML
       - path: /users
         pathType: Prefix
         backend:
           service:
             name: users-service
             port:
-              number: 32776
+              number: 32776  # Assuming 80 is the service port defined in the service YAML
+      - path: /gateway
+        pathType: Prefix
+        backend:
+          service:
+            name: gateway-service
+            port:
+              number: 32770  # Assuming 80 is the service port defined in the service YAML

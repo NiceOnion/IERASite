@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: announcements
+  namespace: default
 spec:
   replicas: 3
   selector:
@@ -17,8 +18,19 @@ spec:
         image: niceonion/ierasite:announcements-latest
         ports:
         - containerPort: 32772
+        env:
+        - name: GOOGLE_APPLICATION_CREDENTIALS
+          value: /secrets/key.json
         resources:
-          requests:
-            cpu: "100m"
           limits:
             cpu: "200m"
+          requests:
+            cpu: "100m"
+        volumeMounts:
+        - mountPath: /secrets
+          name: firestore-key
+          readOnly: true  # Correct field name
+      volumes:
+      - name: firestore-key
+        secret:
+          secretName: firestore-key
