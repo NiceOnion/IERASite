@@ -11,7 +11,7 @@ namespace Announcements.Data
 
         public AnnouncementRepository()
         {
-            string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Secret", "ierasite-d02be-firebase-adminsdk-wvdhv-0d3db191be.json");
+            string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "C:\\Users\\Julia\\source\\repos\\Firestore-Start\\Firestore-Start\\Secret", "ierasite-d02be-firebase-adminsdk-wvdhv-0d3db191be.json");
             Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", path);
             _db = FirestoreDb.Create("ierasite-d02be");
         }

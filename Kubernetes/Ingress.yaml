@@ -4,7 +4,7 @@ metadata:
   name: ingress
 spec:
   rules:
-  - host: example.com
+  - host: iera.nl
     http:
       paths:
       - path: /announcements
