@@ -96,7 +96,6 @@ jobs:
         
       - name: Deploy to Kubernetes
         run: |
-            kubectl apply -f Kubernetes/Deployments/metrics-server.yaml
             kubectl apply -f Kubernetes/Deployments/announcements-deployment.yaml
             kubectl apply -f Kubernetes/Deployments/users-deployment.yaml
             kubectl apply -f Kubernetes/Services/Announcements.yaml
