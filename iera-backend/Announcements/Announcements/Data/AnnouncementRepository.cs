@@ -16,8 +16,8 @@ namespace Announcements.Data
 
         public async Task<List<Announcement>> GetAllAnnouncements()
         {
-            CollectionReference usersCollection = _db.Collection("Announcements");
-            QuerySnapshot snapshot = await usersCollection.GetSnapshotAsync();
+            CollectionReference announcementsCollection = _db.Collection("Announcements");
+            QuerySnapshot snapshot = await announcementsCollection.GetSnapshotAsync();
 
             List<Announcement> users = new List<Announcement>();
 

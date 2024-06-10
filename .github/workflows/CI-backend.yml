@@ -44,7 +44,9 @@ jobs:
     - name: Run tests
       run: |
         cd iera-backend/Gateway
-        dotnet test --verbosity normal --configuration Release
+        dotnet test -- no-build --verbosity normal --configuration Release
+      env:
+        TMPDIR: ${{ runner.temp }}
 
     - name: Publish services
       run: |
