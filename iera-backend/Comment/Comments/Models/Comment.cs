@@ -9,7 +9,7 @@ namespace Comments.Models
         public string? Id { get; set; }
 
         [FirestoreProperty]
-        public string? PostID { get; set; }
+        public string? PostId { get; set; }
 
         [FirestoreProperty]
         public string? UserID { get; set; }

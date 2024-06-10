@@ -67,8 +67,13 @@ namespace Announcements.Tests
         //{
         //    // Arrange
         //    var announcement = new Announcement { Id = "1" };
-        //    var docRef = new DocumentReference(null, "1");
-        //    _mockRepo.Setup(repo => repo.AddAnnouncement(announcement)).ReturnsAsync(docRef);
+
+        //    var mockRepo = new Mock<IAnnouncementRepository>();
+
+        //    // Mock the AddAnnouncement method to return a task that completes with a dummy object
+        //    mockRepo.Setup(repo => repo.AddAnnouncement(It.IsAny<Announcement>())).ReturnsAsync(new object());
+
+        //    var _controller = new AnnouncementController(mockRepo.Object);
 
         //    // Act
         //    var result = await _controller.AddAnnouncement(announcement);
@@ -79,6 +84,8 @@ namespace Announcements.Tests
         //    Assert.Equal(announcement.Id, returnValue.Id);
         //    Assert.Equal("1", createdAtActionResult.RouteValues["id"]);
         //}
+
+
 
         [Fact]
         public async Task AddAnnouncement_ReturnsBadRequest_WhenAnnouncementIsNull()

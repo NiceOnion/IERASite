@@ -22,7 +22,8 @@
         }
       ],
       "UpstreamPathTemplate": "/Announcement/All",
-      "UpstreamHttpMethod": [ "GET" ]
+      "UpstreamHttpMethod": [ "GET" ],
+      "SwaggerKey": "Announcement.API"
     },
     {
       "DownstreamPathTemplate": "/api/Announcement/{id}",
@@ -47,7 +48,8 @@
         }
       ],
       "UpstreamPathTemplate": "/Announcement",
-      "UpstreamHttpMethod": [ "POST" ]
+      "UpstreamHttpMethod": [ "POST" ],
+      "SwaggerKey": "Announcement.API"
     },
     {
       "DownstreamPathTemplate": "/api/Users",
@@ -59,7 +61,47 @@
         }
       ],
       "UpstreamPathTemplate": "/Users",
-      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ]
+      "UpstreamHttpMethod": [ "GET" ],
+      "SwaggerKey": "Users.API"
+    },
+    {
+      "DownstreamPathTemplate": "/api/Users/{id}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 32776
+        }
+      ],
+      "UpstreamPathTemplate": "/User/{id}",
+      "UpstreamHttpMethod": [ "GET", "DELETE", "PUT" ],
+      "SwaggerKey": "Users.API"
+    },
+    {
+      "DownstreamPathTemplate": "/api/Comments/{id}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 32778
+        }
+      ],
+      "UpstreamPathTemplate": "/Comments/{id}",
+      "UpstreamHttpMethod": [ "GET", "DELETE", "PUT" ],
+      "SwaggerKey": "Comments.API"
+    },
+    {
+      "DownstreamPathTemplate": "/api/Comments",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 32778
+        }
+      ],
+      "UpstreamPathTemplate": "/Comments",
+      "UpstreamHttpMethod": [ "GET" ],
+      "SwaggerKey": "Comments.API"
     }
   ],
   "GlobalConfiguration": {
@@ -93,6 +135,16 @@
           "Name": "Users",
           "Version": "v1",
           "Url": "https://localhost:32776/swagger/v1/swagger.json"
+        }
+      ]
+    },
+    {
+      "Key": "Comments.API",
+      "Config": [
+        {
+          "Name": "Comments",
+          "Version": "v1",
+          "Url": "https://localhost:32778/swagger/v1/swagger.json"
         }
       ]
     }

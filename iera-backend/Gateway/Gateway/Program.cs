@@ -20,6 +20,15 @@ builder.Host.UseContentRoot(Directory.GetCurrentDirectory())
         s.AddOcelot();
         s.AddControllers();
         s.AddSwaggerForOcelot(configuration);
+        s.AddCors(options =>
+        {
+            options.AddPolicy("AllowAnyOrigin", builder =>
+            {
+                builder.AllowAnyOrigin()
+                       .AllowAnyMethod()
+                       .AllowAnyHeader();
+            });
+        });
     });
 
 var app = builder.Build();
@@ -28,6 +37,7 @@ app.UseSwaggerForOcelotUI();
 
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseCors("AllowAnyOrigin");
 
 app.UseOcelot().Wait();
 app.Run();

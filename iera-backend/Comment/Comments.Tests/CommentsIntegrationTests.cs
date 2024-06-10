@@ -18,7 +18,7 @@ public class CommentsIntegrationTests : IClassFixture<WebApplicationFactory<Prog
     public async Task AddComment_ReturnsCreatedResponse()
     {
         // Arrange
-        var newComment = new Comment { PostID = "post1", UserID = "user1", Body = "Integration test comment", PostTime = Timestamp.FromDateTime(DateTime.UtcNow) };
+        var newComment = new Comment { PostId = "post1", UserID = "user1", Body = "Integration test comment", PostTime = Timestamp.FromDateTime(DateTime.UtcNow) };
         var content = new StringContent(JsonConvert.SerializeObject(newComment), Encoding.UTF8, "application/json");
 
         // Act
@@ -33,7 +33,7 @@ public class CommentsIntegrationTests : IClassFixture<WebApplicationFactory<Prog
     public async Task GetCommentsByPost_ReturnsOkResponse()
     {
         // Act
-        var response = await _client.GetAsync("/api/Comment/Post/post1");
+        var response = await _client.GetAsync("/api/Comment/Post/0");
 
         // Assert
         response.EnsureSuccessStatusCode();
@@ -54,7 +54,7 @@ public class CommentsIntegrationTests : IClassFixture<WebApplicationFactory<Prog
     public async Task UpdateComment_ReturnsNoContentResponse()
     {
         // Arrange
-        var updatedComment = new Comment { Id = "1", PostID = "post1", UserID = "user1", Body = "Updated integration test comment", PostTime = Timestamp.FromDateTime(DateTime.UtcNow) };
+        var updatedComment = new Comment { Id = "1", PostId = "post1", UserID = "user1", Body = "Updated integration test comment", PostTime = Timestamp.FromDateTime(DateTime.UtcNow) };
         var content = new StringContent(JsonConvert.SerializeObject(updatedComment), Encoding.UTF8, "application/json");
 
         // Act

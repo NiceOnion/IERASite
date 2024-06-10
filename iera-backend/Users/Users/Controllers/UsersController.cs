@@ -23,6 +23,17 @@ public class UsersController : ControllerBase
         return Ok(users);
     }
 
+    [HttpGet("{id}")]
+    public async Task<ActionResult<User>> GetUserById(string id)
+    {
+        var user = await _usersCollection.Find(u => u.Id == id).FirstOrDefaultAsync();
+        if (user == null)
+        {
+            return NotFound();
+        }
+        return Ok(user);
+    }
+
     [HttpPost]
     public async Task<ActionResult<User>> CreateUser(User user)
     {
