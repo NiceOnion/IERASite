@@ -28,30 +28,21 @@ jobs:
         dotnet-version: ${{ matrix.dotnet-version }}
 
     - name: Set Directory
-      run: cd iera-backend/Gateway
+      run: cd ${{ github.workspace }}/iera-backend/Gateway
 
     - name: Restore dependencies
-      run: | 
-        cd iera-backend/Gateway
-        dotnet restore
+      run: dotnet restore iera-backend/Gateway
 
     - name: Build solution
-      run: |
-        cd iera-backend/Gateway
-        dotnet build --no-restore --configuration Release
-        
+      run: dotnet build iera-backend/Gateway --no-restore --configuration Release
 
     - name: Run tests
-      run: |
-        cd iera-backend/Gateway
-        dotnet test -- no-build --verbosity normal --configuration Release
+      run: dotnet test iera-backend/Gateway --no-build --verbosity normal --configuration Release
       env:
         TMPDIR: ${{ runner.temp }}
 
     - name: Publish services
-      run: |
-        cd iera-backend/Gateway
-        dotnet publish -c Release
+      run: dotnet publish iera-backend/Gateway -c Release
 
     - name: Upload build artifacts
       uses: actions/upload-artifact@v3
@@ -103,7 +94,7 @@ jobs:
             kubectl apply -f Kubernetes/Deployments/users-deployment.yaml
             kubectl apply -f Kubernetes/Deployments/ocelot-deployment.yaml
             kubectl apply -f Kubernetes/Services/Announcements.yaml
-            kubectl apply -f Kubernetes/Services/users.
+            kubectl apply -f Kubernetes/Services/users.yaml
             kubectl apply -f Kubernetes/Services/gateway.yaml
             kubectl apply -f Kubernetes/Ingress.yaml
             kubectl apply -f Kubernetes/HPA/hpa-announcements.yaml
