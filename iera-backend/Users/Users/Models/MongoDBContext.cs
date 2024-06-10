@@ -1,8 +1,7 @@
-﻿// MongoDBContext.cs
-using MongoDB.Driver;
+﻿using MongoDB.Driver;
 using Users.Models;
 
-public class MongoDBContext
+public class MongoDBContext : IMongoDBContext
 {
     private readonly IMongoDatabase _database;
 
@@ -15,4 +14,12 @@ public class MongoDBContext
     }
 
     public IMongoCollection<User> Users => _database.GetCollection<User>("Users");
+}
+
+
+
+public class MongoDBSettings
+{
+    public string ConnectionString { get; set; }
+    public string DatabaseName { get; set; }
 }

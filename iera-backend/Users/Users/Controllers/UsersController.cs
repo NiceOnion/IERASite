@@ -11,7 +11,7 @@ public class UsersController : ControllerBase
 {
     private readonly IMongoCollection<User> _usersCollection;
 
-    public UsersController(MongoDBContext dbContext)
+    public UsersController(IMongoDBContext dbContext)
     {
         _usersCollection = dbContext.Users;
     }
@@ -26,13 +26,10 @@ public class UsersController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<User>> CreateUser(User user)
     {
-        // Ensure the Id property is initialized properly
         user.Id = ObjectId.GenerateNewId().ToString();
-
         await _usersCollection.InsertOneAsync(user);
         return CreatedAtAction(nameof(GetUsers), new { id = user.Id }, user);
     }
-
 
     [HttpPut("{id}")]
     public async Task<IActionResult> UpdateUser(string id, User user)
