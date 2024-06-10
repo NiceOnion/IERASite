@@ -85,9 +85,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
         
-      - name: Start minikube
-        uses: medyagh/setup-minikube@master
-        
+      - name: Set up Google Cloud credentials
+        run: echo "${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}" > $HOME/gcloud.json
+      
       - name: Deploy to Kubernetes
         run: |
             kubectl apply -f Kubernetes/Deployments/announcements-deployment.yaml
@@ -100,28 +100,8 @@ jobs:
             kubectl apply -f Kubernetes/HPA/hpa-announcements.yaml
             kubectl apply -f Kubernetes/HPA/hpa-users.yaml
 
-      - name: Wait for pods to be ready
-        run: |
-            kubectl wait --for=condition=Ready pod -l app=announcements --timeout=300s
-            kubectl wait --for=condition=Ready pod -l app=users --timeout=300s
+      # Remaining steps...
 
-      - name: Fetch detailed logs and status
-        run: |
-            kubectl get pods
-            kubectl describe service announcements-service
-            kubectl describe pod -l app=announcements
-            kubectl logs -l app=announcements
-            kubectl get deployments
-            kubectl describe deployment announcements
-            kubectl describe node minikube
-
-      - name: Test service URLs
-        run: |
-            minikube service list 
-            minikube service announcements-service --url
-            echo "------------------opening the service------------------"
-            curl $(minikube service announcements-service --url)
-            
   loadtest:
     runs-on: ubuntu-latest
     needs: deploy

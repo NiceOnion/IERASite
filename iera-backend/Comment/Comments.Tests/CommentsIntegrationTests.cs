@@ -10,7 +10,6 @@ public class CommentsIntegrationTests : IClassFixture<WebApplicationFactory<Prog
 
     public CommentsIntegrationTests(WebApplicationFactory<Program> factory)
     {
-        Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", "path/to/your/credentials.json");
         _client = factory.CreateClient();
     }
 
