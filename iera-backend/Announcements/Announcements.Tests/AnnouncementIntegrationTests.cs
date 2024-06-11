@@ -2,27 +2,31 @@ using Announcements.Controllers;
 using Announcements.Data;
 using Google.Cloud.Firestore;
 using Microsoft.AspNetCore.Mvc;
-using Moq;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Xunit;
 
 namespace Announcements.Tests
 {
     public class AnnouncementIntegrationTests
     {
-        public Mock<IAnnouncementRepository> _mockRepo;
-        public AnnouncementController _controller;
+        private readonly AnnouncementRepository _repository;
+        private readonly AnnouncementController _controller;
 
         public AnnouncementIntegrationTests()
         {
-            _mockRepo = new Mock<IAnnouncementRepository>();
-            _controller = new AnnouncementController(_mockRepo.Object);
+            _repository = new AnnouncementRepository();
+            _controller = new AnnouncementController(_repository);
         }
 
         [Fact]
         public async Task GetAllAnnouncements_ReturnsOkResult_WithListOfAnnouncements()
         {
             // Arrange
-            var announcements = new List<Announcement> { new Announcement(), new Announcement() };
-            _mockRepo.Setup(repo => repo.GetAllAnnouncements()).ReturnsAsync(announcements);
+            var announcement1 = new Announcement { Title = "Announcement 1" };
+            var announcement2 = new Announcement { Title = "Announcement 2" };
+            var docRef1 = await _repository.AddAnnouncement(announcement1);
+            var docRef2 = await _repository.AddAnnouncement(announcement2);
 
             // Act
             var result = await _controller.GetAllAnnouncements();
@@ -30,62 +34,58 @@ namespace Announcements.Tests
             // Assert
             var okResult = Assert.IsType<OkObjectResult>(result.Result);
             var returnValue = Assert.IsType<List<Announcement>>(okResult.Value);
-            Assert.Equal(announcements.Count, returnValue.Count);
+
+            // Clean up
+            await _repository.DeleteAnnouncement(docRef1.Id);
+            await _repository.DeleteAnnouncement(docRef2.Id);
         }
 
         [Fact]
         public async Task GetAnnouncement_ReturnsOkResult_WithAnnouncement()
         {
             // Arrange
-            var announcement = new Announcement { Id = "1" };
-            _mockRepo.Setup(repo => repo.GetAnnouncement("1")).ReturnsAsync(announcement);
+            var announcement = new Announcement { Title = "Announcement 1" };
+            var docRef = await _repository.AddAnnouncement(announcement);
 
             // Act
-            var result = await _controller.GetAnnouncement("1");
+            var result = await _controller.GetAnnouncement(docRef.Id);
 
             // Assert
             var okResult = Assert.IsType<OkObjectResult>(result.Result);
             var returnValue = Assert.IsType<Announcement>(okResult.Value);
-            Assert.Equal(announcement.Id, returnValue.Id);
+            Assert.Equal(announcement.Title, returnValue.Title);
+
+            // Clean up
+            await _repository.DeleteAnnouncement(docRef.Id);
         }
 
         [Fact]
         public async Task GetAnnouncement_ReturnsNotFoundResult_WhenAnnouncementNotFound()
         {
-            // Arrange
-            _mockRepo.Setup(repo => repo.GetAnnouncement("1")).ReturnsAsync((Announcement)null);
-
             // Act
-            var result = await _controller.GetAnnouncement("1");
+            var result = await _controller.GetAnnouncement("non-existent-id");
 
             // Assert
             Assert.IsType<NotFoundResult>(result.Result);
         }
 
-        //[Fact]
-        //public async Task AddAnnouncement_ReturnsCreatedAtActionResult()
-        //{
-        //    // Arrange
-        //    var announcement = new Announcement { Id = "1" };
+        [Fact]
+        public async Task AddAnnouncement_ReturnsCreatedAtActionResult()
+        {
+            // Arrange
+            var announcement = new Announcement { Title = "Announcement 1" };
 
-        //    var mockRepo = new Mock<IAnnouncementRepository>();
+            // Act
+            var result = await _controller.AddAnnouncement(announcement);
 
-        //    // Mock the AddAnnouncement method to return a task that completes with a dummy object
-        //    mockRepo.Setup(repo => repo.AddAnnouncement(It.IsAny<Announcement>())).ReturnsAsync(new object());
+            // Assert
+            var createdAtActionResult = Assert.IsType<CreatedAtActionResult>(result.Result);
+            var returnValue = Assert.IsType<Announcement>(createdAtActionResult.Value);
+            Assert.Equal(announcement.Title, returnValue.Title);
 
-        //    var _controller = new AnnouncementController(mockRepo.Object);
-
-        //    // Act
-        //    var result = await _controller.AddAnnouncement(announcement);
-
-        //    // Assert
-        //    var createdAtActionResult = Assert.IsType<CreatedAtActionResult>(result.Result);
-        //    var returnValue = Assert.IsType<Announcement>(createdAtActionResult.Value);
-        //    Assert.Equal(announcement.Id, returnValue.Id);
-        //    Assert.Equal("1", createdAtActionResult.RouteValues["id"]);
-        //}
-
-
+            // Clean up
+            await _repository.DeleteAnnouncement(createdAtActionResult.RouteValues["id"].ToString());
+        }
 
         [Fact]
         public async Task AddAnnouncement_ReturnsBadRequest_WhenAnnouncementIsNull()
@@ -102,22 +102,27 @@ namespace Announcements.Tests
         public async Task UpdateAnnouncement_ReturnsAcceptedResult()
         {
             // Arrange
-            var announcement = new Announcement { Id = "1" };
-            _mockRepo.Setup(repo => repo.UpdateAnnouncement(announcement)).ReturnsAsync(true);
+            var announcement = new Announcement { Title = "Announcement 1" };
+            var docRef = await _repository.AddAnnouncement(announcement);
+
+            announcement.Id = docRef.Id;  // Set the ID to the Firestore-generated ID
+            announcement.Title = "Updated Title";
 
             // Act
             var result = await _controller.UpdateAnnouncement(announcement);
 
             // Assert
             Assert.IsType<AcceptedResult>(result);
+
+            // Clean up
+            await _repository.DeleteAnnouncement(docRef.Id);
         }
 
         [Fact]
         public async Task UpdateAnnouncement_ReturnsNotFoundResult_WhenAnnouncementNotFound()
         {
             // Arrange
-            var announcement = new Announcement { Id = "1" };
-            _mockRepo.Setup(repo => repo.UpdateAnnouncement(announcement)).ReturnsAsync(false);
+            var announcement = new Announcement { Id = "non-existent-id", Title = "Announcement 1" };
 
             // Act
             var result = await _controller.UpdateAnnouncement(announcement);
@@ -130,10 +135,11 @@ namespace Announcements.Tests
         public async Task DeleteAnnouncement_ReturnsAcceptedResult()
         {
             // Arrange
-            _mockRepo.Setup(repo => repo.DeleteAnnouncement("1")).ReturnsAsync(true);
+            var announcement = new Announcement { Title = "Announcement 1" };
+            var docRef = await _repository.AddAnnouncement(announcement);
 
             // Act
-            var result = await _controller.DeleteAnnouncement("1");
+            var result = await _controller.DeleteAnnouncement(docRef.Id);
 
             // Assert
             Assert.IsType<AcceptedResult>(result);
@@ -142,11 +148,8 @@ namespace Announcements.Tests
         [Fact]
         public async Task DeleteAnnouncement_ReturnsNotFoundResult_WhenAnnouncementNotFound()
         {
-            // Arrange
-            _mockRepo.Setup(repo => repo.DeleteAnnouncement("1")).ReturnsAsync(false);
-
             // Act
-            var result = await _controller.DeleteAnnouncement("1");
+            var result = await _controller.DeleteAnnouncement("non-existent-id");
 
             // Assert
             Assert.IsType<NotFoundResult>(result);

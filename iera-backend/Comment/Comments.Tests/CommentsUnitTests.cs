@@ -49,7 +49,7 @@ public class CommentControllerUnitTests
     public async Task DeleteComment_ReturnsNoContent()
     {
         // Arrange
-        _mockRepo.Setup(repo => repo.DeleteAnnouncement("1")).ReturnsAsync(true);
+        _mockRepo.Setup(repo => repo.DeleteComment("1")).ReturnsAsync(true);
 
         // Act
         var result = await _controller.DeleteComment("1");
@@ -62,7 +62,7 @@ public class CommentControllerUnitTests
     public async Task GetCommentsByPost_ReturnsOk()
     {
         // Arrange
-        var comments = new List<Comment> { new Comment { Id = "1", PostId = "post1", UserID = "user1", Body = "Test comment", PostTime = Timestamp.FromDateTime( DateTime.UtcNow) } };
+        var comments = new List<Comment> { new Comment { Id = "1", PostId = "post1", UserId = "user1", Body = "Test comment", PostTime = Timestamp.FromDateTime( DateTime.UtcNow) } };
         _mockRepo.Setup(repo => repo.GetAllCommentsFromPost("post1")).ReturnsAsync(comments);
 
         // Act
@@ -91,8 +91,8 @@ public class CommentControllerUnitTests
     public async Task UpdateComment_ReturnsNoContent()
     {
         // Arrange
-        var comment = new Comment { Id = "1", PostId = "post1", UserID = "user1", Body = "Updated comment", PostTime = Timestamp.FromDateTime( DateTime.UtcNow )};
-        _mockRepo.Setup(repo => repo.UpdateAnnouncement(comment)).ReturnsAsync(true);
+        var comment = new Comment { Id = "1", PostId = "post1", UserId = "user1", Body = "Updated comment", PostTime = Timestamp.FromDateTime( DateTime.UtcNow )};
+        _mockRepo.Setup(repo => repo.UpdateComment(comment)).ReturnsAsync(true);
 
         // Act
         var result = await _controller.UpdateComment("1", comment);

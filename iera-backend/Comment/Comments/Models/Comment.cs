@@ -12,7 +12,7 @@ namespace Comments.Models
         public string? PostId { get; set; }
 
         [FirestoreProperty]
-        public string? UserID { get; set; }
+        public string? UserId { get; set; }
 
         [FirestoreProperty]
         public string? Body { get; set; }

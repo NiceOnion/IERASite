@@ -5,9 +5,10 @@ namespace Comments.Models
     public interface ICommentRepository
     {
         Task<DocumentReference> Add(Comment comment);
-        Task<bool> DeleteAnnouncement(string id);
+        Task<bool> DeleteComment(string id);
         Task<List<Comment>> GetAllCommentsFromPost(string postId);
         Task<List<Comment>> GetAllCommentsFromUser(string userId);
-        Task<bool> UpdateAnnouncement(Comment comment);
+        Task<Comment> GetCommentById(string id);
+        Task<bool> UpdateComment(Comment comment);
     }
 }

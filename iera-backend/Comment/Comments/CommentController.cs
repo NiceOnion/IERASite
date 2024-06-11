@@ -34,7 +34,7 @@ namespace Comments.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteComment(string id)
         {
-            bool result = await _commentRepository.DeleteAnnouncement(id);
+            bool result = await _commentRepository.DeleteComment(id);
             if (result)
             {
                 return NoContent();
@@ -75,7 +75,7 @@ namespace Comments.Controllers
                 return BadRequest("Comment ID mismatch.");
             }
 
-            bool result = await _commentRepository.UpdateAnnouncement(comment);
+            bool result = await _commentRepository.UpdateComment(comment);
             if (result)
             {
                 return NoContent();
@@ -83,16 +83,15 @@ namespace Comments.Controllers
             return NotFound();
         }
 
-        // GET: api/Comment/{id}
         [HttpGet("{id}")]
         public async Task<ActionResult<Comment>> GetCommentById(string id)
         {
-            var comments = await _commentRepository.GetAllCommentsFromPost(id);
-            if (comments == null)
+            Comment comment = await _commentRepository.GetCommentById(id);
+            if (comment == null)
             {
                 return NotFound();
             }
-            return Ok(comments);
+            return Ok(comment);
         }
     }
 }

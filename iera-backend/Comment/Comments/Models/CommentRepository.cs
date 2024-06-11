@@ -21,7 +21,7 @@ namespace Comments.Models
             return docRef;
         }
 
-        public async Task<bool> DeleteAnnouncement(string id)
+        public async Task<bool> DeleteComment(string id)
         {
             DocumentReference docRef = _db.Collection("Comments").Document(id);
             await docRef.DeleteAsync();
@@ -64,7 +64,23 @@ namespace Comments.Models
             return comments;
         }
 
-        public async Task<bool> UpdateAnnouncement(Comment comment)
+        public async Task<Comment> GetCommentById(string id)
+        {
+            DocumentReference docRef = _db.Collection("Comments").Document(id);
+            DocumentSnapshot snapshot = await docRef.GetSnapshotAsync();
+
+            if (snapshot.Exists)
+            {
+                Comment comment = snapshot.ConvertTo<Comment>();
+                return comment;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        public async Task<bool> UpdateComment(Comment comment)
         {
             DocumentReference docRef = _db.Collection("Comments").Document(comment.Id);
             await docRef.SetAsync(comment, SetOptions.Overwrite);
