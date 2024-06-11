@@ -27,19 +27,22 @@ jobs:
       with:
         dotnet-version: ${{ matrix.dotnet-version }}
 
-    - name: Set Directory
-      run: cd ${{ github.workspace }}/iera-backend/Gateway
-
     - name: Restore dependencies
       run: dotnet restore iera-backend/Gateway
 
     - name: Build solution
       run: dotnet build iera-backend/Gateway --no-restore --configuration Release
 
+    - name: Set up Google Cloud credentials
+      run: echo "${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}" > $HOME/gcloud.json
+
+    - name: Export GOOGLE_APPLICATION_CREDENTIALS
+      run: echo "GOOGLE_APPLICATION_CREDENTIALS=$HOME/gcloud.json" >> $GITHUB_ENV
+
     - name: Run tests
       run: dotnet test iera-backend/Gateway --no-build --verbosity normal --configuration Release
       env:
-        TMPDIR: ${{ runner.temp }}
+        GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
 
     - name: Publish services
       run: dotnet publish iera-backend/Gateway -c Release
@@ -88,6 +91,9 @@ jobs:
       - name: Set up Google Cloud credentials
         run: echo "${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}" > $HOME/gcloud.json
       
+      - name: Export GOOGLE_APPLICATION_CREDENTIALS
+        run: echo "GOOGLE_APPLICATION_CREDENTIALS=$HOME/gcloud.json" >> $GITHUB_ENV
+
       - name: Deploy to Kubernetes
         run: |
             kubectl apply -f Kubernetes/Deployments/announcements-deployment.yaml
@@ -99,8 +105,6 @@ jobs:
             kubectl apply -f Kubernetes/Ingress.yaml
             kubectl apply -f Kubernetes/HPA/hpa-announcements.yaml
             kubectl apply -f Kubernetes/HPA/hpa-users.yaml
-
-      # Remaining steps...
 
   loadtest:
     runs-on: ubuntu-latest
