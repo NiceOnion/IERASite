@@ -140,12 +140,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Install SonarQube Scanner
-        run: |
-          wget -O sonarqube.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.6.2.2472-linux.zip
-          unzip sonarqube.zip -d /usr/local
-          export PATH=$PATH:/usr/local/sonar-scanner-4.6.2.2472-linux/bin
-
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@master
         env:
