@@ -11,75 +11,71 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
-
+    runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         dotnet-version: [6.0.x, 8.0.x]
         os: [ubuntu-latest, windows-latest]
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v3
-      with:
-        dotnet-version: ${{ matrix.dotnet-version }}
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: ${{ matrix.dotnet-version }}
 
-    - name: Set Directory
-      run: cd ${{ github.workspace }}/iera-backend/Gateway
+      - name: Restore dependencies
+        run: dotnet restore iera-backend/Gateway
 
-    - name: Restore dependencies
-      run: dotnet restore iera-backend/Gateway
+      - name: Build solution
+        run: dotnet build iera-backend/Gateway --no-restore --configuration Release
 
-    - name: Build solution
-      run: dotnet build iera-backend/Gateway --no-restore --configuration Release
+      - name: Run tests
+        run: dotnet test iera-backend/Gateway --no-build --verbosity normal --configuration Release
+        env:
+          TMPDIR: ${{ runner.temp }}
 
-    - name: Run tests
-      run: dotnet test iera-backend/Gateway --no-build --verbosity normal --configuration Release
-      env:
-        TMPDIR: ${{ runner.temp }}
+      - name: Publish services
+        run: dotnet publish iera-backend/Gateway -c Release
 
-    - name: Publish services
-      run: dotnet publish iera-backend/Gateway -c Release
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: published-services
+          path: iera-backend/Gateway/bin/Release/net${{ matrix.dotnet-version }}/publish
 
-    - name: Upload build artifacts
-      uses: actions/upload-artifact@v3
-      with:
-        name: published-services
-        path: iera-backend/Gateway/publish/**/*
+      - name: Set up Docker Compose
+        run: docker-compose -v
 
-    - name: Set up Docker Compose
-      run: docker-compose -v
-  
-    - name: Build the Docker images with docker compose
-      run: docker-compose up -d
+      - name: Build Docker images
+        run: docker-compose up -d --build
 
-    - name: Login to Docker Hub
-      uses: docker/login-action@v3
-      with:
-        username: ${{ secrets.DOCKERHUB_USERNAME }}
-        password: ${{ secrets.DOCKERHUB_TOKEN_RW }}
-  
-    - name: Tag and Push gateway
-      run: |
-        docker tag gateway:latest niceonion/ierasite:gateway-latest
-        docker push niceonion/ierasite:gateway-latest
-  
-    - name: Tag and Push announcement
-      run: |    
-        docker tag announcements:latest niceonion/ierasite:announcements-latest
-        docker push niceonion/ierasite:announcements-latest
-      
-    - name: Tag and Push users
-      run: |    
-        docker tag users:latest niceonion/ierasite:users-latest
-        docker push niceonion/ierasite:users-latest
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN_RW }}
+
+      - name: Tag and Push gateway
+        run: |
+          docker tag gateway:latest niceonion/ierasite:gateway-latest
+          docker push niceonion/ierasite:gateway-latest
+
+      - name: Tag and Push announcement
+        run: |    
+          docker tag announcements:latest niceonion/ierasite:announcements-latest
+          docker push niceonion/ierasite:announcements-latest
+
+      - name: Tag and Push users
+        run: |    
+          docker tag users:latest niceonion/ierasite:users-latest
+          docker push niceonion/ierasite:users-latest
 
   deploy:
     runs-on: ubuntu-latest
-    needs: build    
+    needs: build
 
     steps:
       - name: Checkout code
@@ -87,65 +83,71 @@ jobs:
         
       - name: Set up Google Cloud credentials
         run: echo "${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}" > $HOME/gcloud.json
-      
+
+      - name: Authenticate with GCP
+        run: gcloud auth activate-service-account --key-file=$HOME/gcloud.json
+
+      - name: Configure Kubernetes
+        run: gcloud container clusters get-credentials my-cluster --zone my-zone --project my-project
+
       - name: Deploy to Kubernetes
         run: |
-            kubectl apply -f Kubernetes/Deployments/announcements-deployment.yaml
-            kubectl apply -f Kubernetes/Deployments/users-deployment.yaml
-            kubectl apply -f Kubernetes/Deployments/ocelot-deployment.yaml
-            kubectl apply -f Kubernetes/Services/Announcements.yaml
-            kubectl apply -f Kubernetes/Services/users.yaml
-            kubectl apply -f Kubernetes/Services/gateway.yaml
-            kubectl apply -f Kubernetes/Ingress.yaml
-            kubectl apply -f Kubernetes/HPA/hpa-announcements.yaml
-            kubectl apply -f Kubernetes/HPA/hpa-users.yaml
+          kubectl apply -f Kubernetes/Deployments/announcements-deployment.yaml
+          kubectl apply -f Kubernetes/Deployments/users-deployment.yaml
+          kubectl apply -f Kubernetes/Deployments/ocelot-deployment.yaml
+          kubectl apply -f Kubernetes/Services/Announcements.yaml
+          kubectl apply -f Kubernetes/Services/users.yaml
+          kubectl apply -f Kubernetes/Services/gateway.yaml
+          kubectl apply -f Kubernetes/Ingress.yaml
+          kubectl apply -f Kubernetes/HPA/hpa-announcements.yaml
+          kubectl apply -f Kubernetes/HPA/hpa-users.yaml
 
       - name: Set up monitoring stack
         run: |
-            kubectl apply -f Kubernetes/Monitoring/prometheus.yaml
-            kubectl apply -f Kubernetes/Monitoring/grafana.yaml
-            kubectl apply -f Kubernetes/Monitoring/alertmanager.yaml
-            kubectl apply -f Kubernetes/Monitoring/loki.yaml
+          kubectl apply -f Kubernetes/Monitoring/prometheus.yaml
+          kubectl apply -f Kubernetes/Monitoring/grafana.yaml
+          kubectl apply -f Kubernetes/Monitoring/alertmanager.yaml
+          kubectl apply -f Kubernetes/Monitoring/loki.yaml
 
   loadtest:
     runs-on: ubuntu-latest
     needs: deploy
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-    - name: Install k6
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y gnupg software-properties-common
-        sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 33F40BC6
-        echo "deb https://dl.bintray.com/loadimpact/deb stable main" | sudo tee -a /etc/apt/sources.list
-        sudo apt-get update
-        sudo apt-get install -y k6
+      - name: Install k6
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gnupg software-properties-common
+          curl -s https://dl.k6.io/key.gpg | sudo apt-key add -
+          echo "deb https://dl.k6.io/deb stable main" | sudo tee -a /etc/apt/sources.list
+          sudo apt-get update
+          sudo apt-get install -y k6
 
-    - name: Run load test
-      run: |
-        export ANNOUNCEMENTS_URL=$(minikube service announcements-service --url)
-        export USERS_URL=$(minikube service users-service --url)
-        k6 run -e ANNOUNCEMENTS_URL -e USERS_URL loadtest.js
+      - name: Run load test
+        run: |
+          export ANNOUNCEMENTS_URL=$(kubectl get svc announcements-service -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+          export USERS_URL=$(kubectl get svc users-service -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+          k6 run -e ANNOUNCEMENTS_URL=$ANNOUNCEMENTS_URL -e USERS_URL=$USERS_URL loadtest.js
 
   static-analysis:
     runs-on: ubuntu-latest
     needs: build
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-    - name: Install SonarQube Scanner
-      run: |
-        wget -O sonarqube.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.6.2.2472-linux.zip
-        unzip sonarqube.zip -d /usr/local
-        export PATH=$PATH:/usr/local/sonar-scanner-4.6.2.2472-linux/bin
+      - name: Install SonarQube Scanner
+        run: |
+          wget -O sonarqube.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.6.2.2472-linux.zip
+          unzip sonarqube.zip -d /usr/local
+          export PATH=$PATH:/usr/local/sonar-scanner-4.6.2.2472-linux/bin
 
-    - name: SonarCloud Scan
-      uses: SonarSource/sonarcloud-github-action@master
-      env:
-        GITHUB_TOKEN_RW: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN_RW: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
