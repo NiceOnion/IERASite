@@ -75,43 +75,42 @@ jobs:
 
   
   deploy:
-    runs-on: ubuntu-latest
-    needs: build
+      runs-on: ubuntu-latest
+      needs: build
 
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+      steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-    - name: Create Google Cloud credentials file
-      run: |
-        echo "${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_JSON }}" > $HOME/gcloud.json
-        cat $HOME/gcloud.json
+      - name: Create Google Cloud credentials file
+        run: |
+          echo "${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_BASE64 }}" | base64 --decode > $HOME/gcloud.json
+          cat $HOME/gcloud.json
 
-    - name: Authenticate with GCP
-      run: gcloud auth activate-service-account --key-file=$HOME/gcloud.json
+      - name: Authenticate with GCP
+        run: gcloud auth activate-service-account --key-file=$HOME/gcloud.json
 
-    - name: Configure Kubernetes
-      run: gcloud container clusters get-credentials my-cluster --zone my-zone --project my-project
+      - name: Configure Kubernetes
+        run: gcloud container clusters get-credentials my-cluster --zone my-zone --project my-project
 
-    - name: Deploy to Kubernetes
-      run: |
-        kubectl apply -f Kubernetes/Deployments/announcements-deployment.yaml
-        kubectl apply -f Kubernetes/Deployments/users-deployment.yaml
-        kubectl apply -f Kubernetes/Deployments/ocelot-deployment.yaml
-        kubectl apply -f Kubernetes/Services/Announcements.yaml
-        kubectl apply -f Kubernetes/Services/users.yaml
-        kubectl apply -f Kubernetes/Services/gateway.yaml
-        kubectl apply -f Kubernetes/Ingress.yaml
-        kubectl apply -f Kubernetes/HPA/hpa-announcements.yaml
-        kubectl apply -f Kubernetes/HPA/hpa-users.yaml
+      - name: Deploy to Kubernetes
+        run: |
+          kubectl apply -f Kubernetes/Deployments/announcements-deployment.yaml
+          kubectl apply -f Kubernetes/Deployments/users-deployment.yaml
+          kubectl apply -f Kubernetes/Deployments/ocelot-deployment.yaml
+          kubectl apply -f Kubernetes/Services/Announcements.yaml
+          kubectl apply -f Kubernetes/Services/users.yaml
+          kubectl apply -f Kubernetes/Services/gateway.yaml
+          kubectl apply -f Kubernetes/Ingress.yaml
+          kubectl apply -f Kubernetes/HPA/hpa-announcements.yaml
+          kubectl apply -f Kubernetes/HPA/hpa-users.yaml
 
-    - name: Set up monitoring stack
-      run: |
-        kubectl apply -f Kubernetes/Monitoring/prometheus.yaml
-        kubectl apply -f Kubernetes/Monitoring/grafana.yaml
-        kubectl apply -f Kubernetes/Monitoring/alertmanager.yaml
-        kubectl apply -f Kubernetes/Monitoring/loki.yaml
-
+      - name: Set up monitoring stack
+        run: |
+          kubectl apply -f Kubernetes/Monitoring/prometheus.yaml
+          kubectl apply -f Kubernetes/Monitoring/grafana.yaml
+          kubectl apply -f Kubernetes/Monitoring/alertmanager.yaml
+          kubectl apply -f Kubernetes/Monitoring/loki.yaml
 
         
   loadtest:
