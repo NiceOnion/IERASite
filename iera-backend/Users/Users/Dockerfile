@@ -8,10 +8,10 @@ USER app
 FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG configuration=Release
 WORKDIR /src
-COPY ["iera-backend/Gateway/Users/Users.csproj", "iera-backend/Gateway/Users/"]
-RUN dotnet restore "iera-backend/Gateway/Users/Users.csproj"
+COPY ["iera-backend/Users/Users/Users.csproj", "iera-backend/Users/Users/"]
+RUN dotnet restore "iera-backend/Users/Users/Users.csproj"
 COPY . .
-WORKDIR "/src/iera-backend/Gateway/Users"
+WORKDIR "/src/iera-backend/Users/Users"
 RUN dotnet build "Users.csproj" -c $configuration -o /app/build
 
 FROM build AS publish

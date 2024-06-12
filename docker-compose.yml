@@ -31,6 +31,6 @@ services:
     image: comments
     build: 
       context: .
-      dockerfile: iera-backend/Comments/Comments/Dockerfile
+      dockerfile: iera-backend/Comment/Comments/Dockerfile
     ports:
       - 32778:32778
