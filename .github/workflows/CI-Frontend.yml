@@ -32,9 +32,3 @@ jobs:
             - name: Run tests
               run: |
                 cd iera-frontend  
-
-            - name: SonarCloud Scan
-              uses: SonarSource/sonarcloud-github-action@master
-              env:
-                GITHUB_TOKEN_RW: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
-                SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
