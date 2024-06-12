@@ -23,6 +23,14 @@ services:
     image: users
     build: 
       context: .
-      dockerfile: iera-backend/Gateway/Users/Dockerfile
+      dockerfile: iera-backend/Users/Users/Dockerfile
     ports:
       - 32776:32776
+
+  comments:
+    image: comments
+    build: 
+      context: .
+      dockerfile: iera-backend/Comments/Comments/Dockerfile
+    ports:
+      - 32778:32778
