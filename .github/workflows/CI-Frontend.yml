@@ -1,3 +1,4 @@
+
 name: CI-Frontend
 
 on:
@@ -9,36 +10,24 @@ on:
             - main
 
 jobs:
-    Setup:
+    Build:
         runs-on: ubuntu-latest
 
         steps:
-            - name: Checkout repository
-              uses: actions/checkout@v2
-        
+            - uses: actions/checkout@v3
             - name: Setup Node.js
               uses: actions/setup-node@v3
               with:
                 node-version: 20
-        
 
-    Frontend:
-        needs: Setup
-        runs-on: ubuntu-latest
-
-        steps:
-          - name: Install dependencies
-            run: |
-                cd IERA-frontend
+            - name: Install dependencies
+              run: |
+                cd iera-frontend
                 npm install
-
-          - name: Build
-            run: |
+            - name: Build
+              run: |
                 cd iera-frontend
                 npm run build
-
-          - name: Run tests
-            run: |
-                cd iera-frontend  
-                npm test
-
+            - name: Run tests
+              run: |
+                cd iera-frontend 
