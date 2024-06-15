@@ -115,6 +115,9 @@ jobs:
     needs: deploy
 
     steps:
+      - name: goodluck
+        run: echo good luck
+
       - name: Checkout code
         uses: actions/checkout@v3
 

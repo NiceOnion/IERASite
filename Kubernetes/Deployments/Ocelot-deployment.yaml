@@ -16,4 +16,4 @@ spec:
       - name: gateway
         image: niceonion/ierasite:gateway-latest
         ports:
-        - containerPort: 32770
+        -  containerPort: 32770
