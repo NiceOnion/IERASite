@@ -44,7 +44,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 32772
+          "Port": 7103
         }
       ],
       "UpstreamPathTemplate": "/Announcement",

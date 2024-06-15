@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Xunit;
 using Microsoft.AspNetCore.Mvc;
-using Google.Cloud.Firestore;
 
 namespace Announcements.Tests
 {
@@ -65,23 +64,33 @@ namespace Announcements.Tests
             Assert.IsType<NotFoundResult>(result.Result);
         }
 
-        //[Fact]
-        //public async Task AddAnnouncement_ReturnsCreatedAtActionResult_WithTheAnnouncement()
-        //{
-        //    // Arrange
-        //    var announcement = new Announcement { Id = "1" };
-        //    var mockDocumentReference = new Mock<DocumentReference>(MockBehavior.Strict, null, null, null);
-        //    mockDocumentReference.Setup(dr => dr.Id).Returns("1");
-        //    _mockRepo.Setup(repo => repo.AddAnnouncement(announcement)).ReturnsAsync(mockDocumentReference.Object);
+        [Fact]
+        public async Task AddAnnouncement_ReturnsCreatedAtActionResult_WithTheAnnouncement()
+        {
+            // Arrange
+            var announcement = new Announcement { Id = "1" };
+            _mockRepo.Setup(repo => repo.AddAnnouncement(announcement)).Returns(Task.CompletedTask);
 
-        //    // Act
-        //    var result = await _controller.AddAnnouncement(announcement);
+            // Act
+            var result = await _controller.AddAnnouncement(announcement);
 
-        //    // Assert
-        //    var createdAtActionResult = Assert.IsType<CreatedAtActionResult>(result.Result);
-        //    var returnValue = Assert.IsType<Announcement>(createdAtActionResult.Value);
-        //    Assert.Equal("1", createdAtActionResult.RouteValues["id"]);
-        //}
+            // Assert
+            var createdAtActionResult = Assert.IsType<CreatedAtActionResult>(result.Result);
+            var returnValue = Assert.IsType<Announcement>(createdAtActionResult.Value);
+            Assert.Equal("1", createdAtActionResult.RouteValues["id"]);
+            Assert.Equal(announcement, returnValue);
+        }
+
+        [Fact]
+        public async Task AddAnnouncement_ReturnsBadRequest_WhenAnnouncementIsNull()
+        {
+            // Act
+            var result = await _controller.AddAnnouncement(null);
+
+            // Assert
+            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
+            Assert.Equal("Announcement is null", badRequestResult.Value);
+        }
 
         [Fact]
         public async Task UpdateAnnouncement_ReturnsAccepted_WhenUpdateSuccessful()
@@ -109,6 +118,17 @@ namespace Announcements.Tests
 
             // Assert
             Assert.IsType<NotFoundResult>(result);
+        }
+
+        [Fact]
+        public async Task UpdateAnnouncement_ReturnsBadRequest_WhenAnnouncementIsNull()
+        {
+            // Act
+            var result = await _controller.UpdateAnnouncement(null);
+
+            // Assert
+            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
+            Assert.Equal("Announcement is null", badRequestResult.Value);
         }
 
         [Fact]

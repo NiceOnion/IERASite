@@ -1,90 +1,61 @@
-﻿using Google.Cloud.Firestore;
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Comments.Models;
+using MongoDB.Bson;
+using MongoDB.Driver;
 
-namespace Comments.Models
+namespace Comments.Data
 {
     public class CommentRepository : ICommentRepository
     {
-        private readonly FirestoreDb _db;
+        private readonly IMongoDBContext _context;
+        private readonly IMongoCollection<Comment> _commentsCollection;
 
-        public CommentRepository()
+        public CommentRepository(IMongoDBContext context)
         {
-            _db = FirestoreDb.Create("ierasite-d02be");
-        }
-
-        public async Task<DocumentReference> Add(Comment comment)
-        {
-            CollectionReference colRef = _db.Collection("Comments");
-            DocumentReference docRef = await colRef.AddAsync(comment);
-            return docRef;
-        }
-
-        public async Task<bool> DeleteComment(string id)
-        {
-            DocumentReference docRef = _db.Collection("Comments").Document(id);
-            await docRef.DeleteAsync();
-            return true;
-        }
-
-        public async Task<List<Comment>> GetAllCommentsFromPost(string postId)
-        {
-            CollectionReference colRef = _db.Collection("Comments");
-            Query query = colRef.WhereEqualTo("PostId", postId);
-            QuerySnapshot snapshot = await query.GetSnapshotAsync();
-
-            List<Comment> comments = new List<Comment>();
-            foreach (DocumentSnapshot document in snapshot.Documents)
-            {
-                if (document.Exists)
-                {
-                    Comment comment = document.ConvertTo<Comment>();
-                    comments.Add(comment);
-                }
-            }
-            return comments;
-        }
-
-        public async Task<List<Comment>> GetAllCommentsFromUser(string userId)
-        {
-            CollectionReference colRef = _db.Collection("Comments");
-            Query query = colRef.WhereEqualTo("UserId", userId);
-            QuerySnapshot snapshot = await query.GetSnapshotAsync();
-
-            List<Comment> comments = new List<Comment>();
-            foreach (DocumentSnapshot document in snapshot.Documents)
-            {
-                if (document.Exists)
-                {
-                    Comment comment = document.ConvertTo<Comment>();
-                    comments.Add(comment);
-                }
-            }
-            return comments;
+            _context = context;
+            _commentsCollection = _context.Comments;
         }
 
         public async Task<Comment> GetCommentById(string id)
         {
-            DocumentReference docRef = _db.Collection("Comments").Document(id);
-            DocumentSnapshot snapshot = await docRef.GetSnapshotAsync();
+            return await _commentsCollection.Find(c => c.Id == id).FirstOrDefaultAsync();
+        }
 
-            if (snapshot.Exists)
-            {
-                Comment comment = snapshot.ConvertTo<Comment>();
-                return comment;
-            }
-            else
-            {
-                return null;
-            }
+        public async Task<List<Comment>> GetAllCommentsFromPost(string postId)
+        {
+            return await _commentsCollection.Find(c => c.PostId == postId).ToListAsync();
+        }
+
+        public async Task<List<Comment>> GetAllCommentsFromUser(string userId)
+        {
+            return await _commentsCollection.Find(c => c.UserId == userId).ToListAsync();
+        }
+
+        public async Task Add(Comment comment)
+        {
+            comment.Id = ObjectId.GenerateNewId().ToString();
+            await _commentsCollection.InsertOneAsync(comment);
         }
 
         public async Task<bool> UpdateComment(Comment comment)
         {
-            DocumentReference docRef = _db.Collection("Comments").Document(comment.Id);
-            await docRef.SetAsync(comment, SetOptions.Overwrite);
-            return true;
+            var result = await _commentsCollection.ReplaceOneAsync(c => c.Id == comment.Id, comment);
+            return result.IsAcknowledged && result.ModifiedCount > 0;
+        }
+
+        public async void UpdateCommentDeletedAccount(string userId)
+        {
+            var filter = Builders<Comment>.Filter.Eq(a => a.UserId, userId);
+            var update = Builders<Comment>.Update.Set(a => a.UserId, "User removed");
+
+            var result = await _context.Comments.UpdateManyAsync(filter, update);
+        }
+
+        public async Task<bool> DeleteComment(string id)
+        {
+            var result = await _commentsCollection.DeleteOneAsync(c => c.Id == id);
+            return result.IsAcknowledged && result.DeletedCount > 0;
         }
     }
 }

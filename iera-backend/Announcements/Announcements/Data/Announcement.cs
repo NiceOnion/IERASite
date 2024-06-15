@@ -1,28 +1,24 @@
 using System;
-using Google.Cloud.Firestore;
-using Microsoft.VisualBasic;
+using MongoDB.Bson.Serialization.Attributes;
+using MongoDB.Bson;
 
 namespace Announcements.Data
 {
-    [FirestoreData]
     public class Announcement
     {
-        [FirestoreDocumentId]
+        [BsonId]
+        [BsonRepresentation(BsonType.ObjectId)]
         public string? Id { get; set; }
 
-        [FirestoreProperty]
         public string? UserID { get; set; }
 
-        [FirestoreProperty]
         public string? Title { get; set; }
 
-        [FirestoreProperty]
         public string? Body { get; set; }
 
-        [FirestoreProperty]
         public string? Image { get; set; }
 
-        [FirestoreProperty]
-        public Timestamp PostTime { get; set; }
+        public DateTime PostTime { get; set; }
+        public int? CommentCount { get; set; } = 0;
     }
 }

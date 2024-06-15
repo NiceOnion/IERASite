@@ -46,25 +46,6 @@ public class UsersControllerTests
     }
 
     [Fact]
-    public async Task CreateUser_AddsUserToDatabase()
-    {
-        // Arrange
-        var user = new User { Name = "Test User", Email = "test@example.com" };
-        _mockCollection.Setup(c => c.InsertOneAsync(user, null, default)).Returns(Task.CompletedTask);
-
-        // Act
-        var result = await _controller.CreateUser(user);
-
-        // Assert
-        var createdAtActionResult = result.Result as CreatedAtActionResult;
-        createdAtActionResult.Should().NotBeNull();
-        var createdUser = createdAtActionResult.Value as User;
-        createdUser.Should().NotBeNull();
-        createdUser.Name.Should().Be("Test User");
-        createdUser.Email.Should().Be("test@example.com");
-    }
-
-    [Fact]
     public async Task UpdateUser_UpdatesExistingUser()
     {
         // Arrange

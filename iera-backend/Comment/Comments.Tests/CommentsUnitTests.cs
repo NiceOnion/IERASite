@@ -11,39 +11,37 @@ public class CommentControllerUnitTests
 {
     private readonly Mock<ICommentRepository> _mockRepo;
     private readonly CommentController _controller;
+    private readonly Mock<IServiceProvider> _mockServiceProvider;
 
     public CommentControllerUnitTests()
     {
         _mockRepo = new Mock<ICommentRepository>();
-        _controller = new CommentController(_mockRepo.Object);
+        _mockServiceProvider = new Mock<IServiceProvider>();
+        _controller = new CommentController(_mockRepo.Object, _mockServiceProvider.Object);
     }
 
-    //[Fact]
-    //public async Task AddComment_ReturnsCreatedAtAction()
-    //{
-    //    // Arrange
-    //    var newComment = new Comment
-    //    {
-    //        Id = "1",
-    //        PostId = "post1",
-    //        UserID = "user1",
-    //        Body = "Test comment",
-    //        PostTime = Timestamp.FromDateTime(DateTime.UtcNow)
-    //    };
+    [Fact]
+    public async Task AddComment_ReturnsCreatedAtAction()
+    {
+        // Arrange
+        var newComment = new Comment
+        {
+            Id = "1",
+            PostId = "post1",
+            UserId = "user1",
+            Body = "Test comment",
+            PostTime = DateTime.UtcNow
+        };
 
-    //    var mockRepo = new Mock<ICommentRepository>();
-    //    mockRepo.Setup(repo => repo.Add(It.IsAny<Comment>())).ReturnsAsync(newComment);
+        _mockRepo.Setup(repo => repo.Add(It.IsAny<Comment>())).Returns(Task.CompletedTask);
 
-    //    var _controller = new CommentController(mockRepo.Object);
+        // Act
+        var result = await _controller.AddComment(newComment);
 
-    //    // Act
-    //    var result = await _controller.AddComment(newComment);
-
-    //    // Assert
-    //    var createdAtActionResult = Assert.IsType<CreatedAtActionResult>(result);
-    //    Assert.Equal("GetCommentById", createdAtActionResult.ActionName);
-    //}
-
+        // Assert
+        var createdAtActionResult = Assert.IsType<CreatedAtActionResult>(result);
+        Assert.Equal("GetCommentById", createdAtActionResult.ActionName);
+    }
 
     [Fact]
     public async Task DeleteComment_ReturnsNoContent()
@@ -62,7 +60,18 @@ public class CommentControllerUnitTests
     public async Task GetCommentsByPost_ReturnsOk()
     {
         // Arrange
-        var comments = new List<Comment> { new Comment { Id = "1", PostId = "post1", UserId = "user1", Body = "Test comment", PostTime = Timestamp.FromDateTime( DateTime.UtcNow) } };
+        var comments = new List<Comment>
+        {
+            new Comment
+            {
+                Id = "1",
+                PostId = "post1",
+                UserId = "user1",
+                Body = "Test comment",
+                PostTime = DateTime.UtcNow
+            }
+        };
+
         _mockRepo.Setup(repo => repo.GetAllCommentsFromPost("post1")).ReturnsAsync(comments);
 
         // Act
@@ -91,7 +100,15 @@ public class CommentControllerUnitTests
     public async Task UpdateComment_ReturnsNoContent()
     {
         // Arrange
-        var comment = new Comment { Id = "1", PostId = "post1", UserId = "user1", Body = "Updated comment", PostTime = Timestamp.FromDateTime( DateTime.UtcNow )};
+        var comment = new Comment
+        {
+            Id = "1",
+            PostId = "post1",
+            UserId = "user1",
+            Body = "Updated comment",
+            PostTime = DateTime.UtcNow
+        };
+
         _mockRepo.Setup(repo => repo.UpdateComment(comment)).ReturnsAsync(true);
 
         // Act
@@ -99,5 +116,42 @@ public class CommentControllerUnitTests
 
         // Assert
         Assert.IsType<NoContentResult>(result);
+    }
+
+    [Fact]
+    public async Task GetCommentById_ReturnsOk()
+    {
+        // Arrange
+        var comment = new Comment
+        {
+            Id = "1",
+            PostId = "post1",
+            UserId = "user1",
+            Body = "Test comment",
+            PostTime = DateTime.UtcNow
+        };
+
+        _mockRepo.Setup(repo => repo.GetCommentById("1")).ReturnsAsync(comment);
+
+        // Act
+        var result = await _controller.GetCommentById("1");
+
+        // Assert
+        var okResult = Assert.IsType<OkObjectResult>(result.Result);
+        var returnComment = Assert.IsType<Comment>(okResult.Value);
+        Assert.Equal(comment.Id, returnComment.Id);
+    }
+
+    [Fact]
+    public async Task GetCommentById_ReturnsNotFound()
+    {
+        // Arrange
+        _mockRepo.Setup(repo => repo.GetCommentById("1")).ReturnsAsync((Comment)null);
+
+        // Act
+        var result = await _controller.GetCommentById("1");
+
+        // Assert
+        Assert.IsType<NotFoundResult>(result.Result);
     }
 }
