@@ -104,9 +104,9 @@ jobs:
 
       - name: Set up monitoring stack
         run: |
-            kubectl apply -f config/prometheus/prometheus.yaml
-            kubectl apply -f config/grafana/grafana.yaml
-            kubectl apply -f config/loki/loki.yaml
+            kubectl apply -f Config/Prometheus/Prometheus.yaml
+            kubectl apply -f Config/Grafana/Grafana.yaml
+            kubectl apply -f Config/Loki/Loki.yaml
 
         
   loadtest:
