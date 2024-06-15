@@ -1,35 +1,100 @@
 {
-    "Routes":[
+  "Routes": [
+    {
+      "DownstreamPathTemplate": "/api/Event",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
         {
-            
-        "DownstreamPathTemplate":"/api/events",
-        "DownstreamScheme": "http",
-        "DownstreamHostAndPorts":
-        [
-            {
-                "Host":"events-1",
-                "Port": 32774
-            }
-        ],
-        "UpstreamPathTemplate":"/Event",
-        "UpstreamHttpMethod":
-        [
-            "GET"
-        ]
-        },
-        {
-            "DownstreamPathTemplate": "/api/announcements",
-            "DownstreamScheme":"http",
-            "DownstreamHostAndPorts":[
-                {
-                    "Host": "announcements-1",
-                    "Port": 32772
-                }
-            ],
-            "UpstreamPathTemplate":"/Announcement",
-            "UpstreamHttpMethod":[
-                "GET"
-            ]
+          "Host": "192.168.49.2",
+          "Port": 32774
         }
-    ]
+      ],
+      "UpstreamPathTemplate": "/Event",
+      "UpstreamHttpMethod": [ "GET" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/Announcement/All",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "192.168.49.2",
+          "Port": 32772
+        }
+      ],
+      "UpstreamPathTemplate": "/Announcement/All",
+      "UpstreamHttpMethod": [ "GET" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/Announcement/{id}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "192.168.49.2",
+          "Port": 32772
+        }
+      ],
+      "UpstreamPathTemplate": "/Announcement/{id}",
+      "UpstreamHttpMethod": [ "GET", "DELETE", "PUT" ],
+      "SwaggerKey": "Announcements.API"
+    },
+    {
+      "DownstreamPathTemplate": "/api/Announcement",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "192.168.49.2",
+          "Port": 32772
+        }
+      ],
+      "UpstreamPathTemplate": "/Announcement",
+      "UpstreamHttpMethod": [ "POST" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/Users",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "192.168.49.2",
+          "Port": 32776
+        }
+      ],
+      "UpstreamPathTemplate": "/Users",
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ]
+    }
+  ],
+  "GlobalConfiguration": {
+    "BaseUrl": "https://localhost:32770"
+  },
+  "SwaggerEndPoints": [
+    {
+      "Key": "Events.API",
+      "Config": [
+        {
+          "Name": "Events",
+          "Version": "v1",
+          "Url": "http://Events:32774/swagger/v1/swagger.json"
+        }
+      ]
+    },
+    {
+      "Key": "Announcements.API",
+      "Config": [
+        {
+          "Name": "Announcements",
+          "Version": "v1",
+          "Url": "https://localhost:32772/swagger/v1/swagger.json"
+        }
+      ]
+    },
+    {
+      "Key": "Users.API",
+      "Config": [
+        {
+          "Name": "Users",
+          "Version": "v1",
+          "Url": "https://localhost:32776/swagger/v1/swagger.json"
+        }
+      ]
+    }
+  ]
 }

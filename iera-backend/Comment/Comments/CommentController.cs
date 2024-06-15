@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Comments.Data; // Ensure this namespace includes your CommentRepository and other necessary classes

@@ -5,10 +5,11 @@
       "launchBrowser": true,
       "launchUrl": "swagger",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "GOOGLE_APPLICATION_CREDENTIALS": "C:\\Users\\Julia\\source\\repos\\Firestore-Start\\Firestore-Start\\Secret\\ierasite-d02be-firebase-adminsdk-wvdhv-0d3db191be.json"
       },
       "dotnetRunMessages": true,
-      "applicationUrl": "https://localhost:7103;http://localhost:32772"
+      "applicationUrl": "https://localhost:32772;http://localhost:32773"
     },
     "IIS Express": {
       "commandName": "IISExpress",

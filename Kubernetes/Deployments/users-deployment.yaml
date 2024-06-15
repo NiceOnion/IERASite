@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: users
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: users
+  template:
+    metadata:
+      labels:
+        app: users
+    spec:
+      containers:
+      - name: users
+        image: niceonion/ierasite:users-latest
+        ports:
+        - containerPort: 32773
+        resources:
+          requests:
+            cpu: "100m"
+          limits:
+            cpu: "200m"

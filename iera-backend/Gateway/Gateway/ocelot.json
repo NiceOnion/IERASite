@@ -5,8 +5,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "Events",
-          "Port": 32704
+          "Host": "localhost",
+          "Port": 32774
         }
       ],
       "UpstreamPathTemplate": "/Event",
@@ -18,11 +18,12 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7103
+          "Port": 32772
         }
       ],
-      "UpstreamPathTemplate": "/Announcement",
-      "UpstreamHttpMethod": [ "GET" ]
+      "UpstreamPathTemplate": "/Announcement/All",
+      "UpstreamHttpMethod": [ "GET" ],
+      "SwaggerKey": "Announcement.API"
     },
     {
       "DownstreamPathTemplate": "/api/Announcement/{id}",
@@ -30,12 +31,12 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7103
+          "Port": 32772
         }
       ],
       "UpstreamPathTemplate": "/Announcement/{id}",
       "UpstreamHttpMethod": [ "GET", "DELETE", "PUT" ],
-      "SwaggerKey": "Announcement.API"
+      "SwaggerKey": "Announcements.API"
     },
     {
       "DownstreamPathTemplate": "/api/Announcement",
@@ -47,11 +48,64 @@
         }
       ],
       "UpstreamPathTemplate": "/Announcement",
-      "UpstreamHttpMethod": [ "POST" ]
+      "UpstreamHttpMethod": [ "POST" ],
+      "SwaggerKey": "Announcement.API"
+    },
+    {
+      "DownstreamPathTemplate": "/api/Users",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 32776
+        }
+      ],
+      "UpstreamPathTemplate": "/Users",
+      "UpstreamHttpMethod": [ "GET" ],
+      "SwaggerKey": "Users.API"
+    },
+    {
+      "DownstreamPathTemplate": "/api/Users/{id}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 32776
+        }
+      ],
+      "UpstreamPathTemplate": "/User/{id}",
+      "UpstreamHttpMethod": [ "GET", "DELETE", "PUT" ],
+      "SwaggerKey": "Users.API"
+    },
+    {
+      "DownstreamPathTemplate": "/api/Comments/{id}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 32778
+        }
+      ],
+      "UpstreamPathTemplate": "/Comments/{id}",
+      "UpstreamHttpMethod": [ "GET", "DELETE", "PUT" ],
+      "SwaggerKey": "Comments.API"
+    },
+    {
+      "DownstreamPathTemplate": "/api/Comments",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 32778
+        }
+      ],
+      "UpstreamPathTemplate": "/Comments",
+      "UpstreamHttpMethod": [ "GET" ],
+      "SwaggerKey": "Comments.API"
     }
   ],
   "GlobalConfiguration": {
-   "BaseUrl": "https://localhost:7011"
+    "BaseUrl": "https://localhost:32770"
   },
   "SwaggerEndPoints": [
     {
@@ -60,7 +114,7 @@
         {
           "Name": "Events",
           "Version": "v1",
-          "Url": "http://Events:32704/swagger/v1/swagger.json"
+          "Url": "http://Events:32774/swagger/v1/swagger.json"
         }
       ]
     },
@@ -70,7 +124,27 @@
         {
           "Name": "Announcements",
           "Version": "v1",
-          "Url": "https://localhost:7103/swagger/v1/swagger.json"
+          "Url": "https://localhost:32772/swagger/v1/swagger.json"
+        }
+      ]
+    },
+    {
+      "Key": "Users.API",
+      "Config": [
+        {
+          "Name": "Users",
+          "Version": "v1",
+          "Url": "https://localhost:32776/swagger/v1/swagger.json"
+        }
+      ]
+    },
+    {
+      "Key": "Comments.API",
+      "Config": [
+        {
+          "Name": "Comments",
+          "Version": "v1",
+          "Url": "https://localhost:32778/swagger/v1/swagger.json"
         }
       ]
     }

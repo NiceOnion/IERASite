@@ -18,3 +18,19 @@ services:
       dockerfile: iera-backend/Announcements/Announcements/Dockerfile
     ports:
       - 32772:32772
+
+  users:
+    image: users
+    build: 
+      context: .
+      dockerfile: iera-backend/Users/Users/Dockerfile
+    ports:
+      - 32776:32776
+
+  comments:
+    image: comments
+    build: 
+      context: .
+      dockerfile: iera-backend/Comment/Comments/Dockerfile
+    ports:
+      - 32778:32778

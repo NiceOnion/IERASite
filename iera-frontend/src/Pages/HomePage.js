@@ -1,61 +1,42 @@
-import React from 'react';
-import { Link } from 'react-router-dom'; // Import Link from react-router-dom
-import Routingbutton from '../FunctionalComponents/Routingbutton';
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import APIAddress from '../Data/APIAddress';
 
+function AnnouncementList() {
+  const [announcements, setAnnouncements] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-// Dashboard component
-function Dashboard({ announcements }) {
- // GetAllAnnouncements()
+  useEffect(() => {
+    fetch(APIAddress + "/Announcement/All")
+      .then(response => response.json())
+      .then(data => {
+        setAnnouncements(data);
+        setLoading(false);
+        console.log(data); // Log the fetched data here
+      })
+      .catch(error => console.error('Error fetching announcements:', error));
+  }, []);
 
   return (
     <div>
-      <h3>thuispagina</h3>
-      <div>
-        <p>
-          Actuele ontwikkelingen:
-        </p>
-        <AnnouncementArray announcements={announcements} />
-      </div>
+      <h1>Announcements</h1>
+      <Link to="/announcement/create">Create Announcement</Link>
+      {loading ? (
+        <p>Loading...</p>
+      ) : (
+        <ul>
+          {announcements.map(announcement => (
+            <li key={announcement.id}>
+              <Link to={`/announcement/${announcement.id}`}>
+                <h3>{announcement.title}</h3>
+              </Link>
+              <p>{announcement.content}</p>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 }
 
-// AnnouncementArray component
-function AnnouncementArray({ announcements }) {
-  console.log(announcements)
-  const array = () => {
-    return announcements.map(announcement => (
-      <AnnouncementCard
-        announcement={announcement}
-        key={announcement.id}
-      />
-    ));
-  }
-
-  return (
-    <div className='announcement-container'>
-      {array()}
-      <footer>
-        <Routingbutton to="/Aankondigingen">Naar Aankondigingen</Routingbutton>
-      </footer>
-    </div>
-  );
-}
-
-// AnnouncementCard component
-function AnnouncementCard({ announcement }) {
-  const { id, student, naam, aangekodigdOp: aangekondigdOp, body } = announcement;
-  return (
-    <div key={id} className='announcement-card'>
-      <Link to={`/announcement/${id}`}>
-        <strong>{student}</strong>
-        <h2>{naam}</h2>
-        <p>{aangekondigdOp}</p>
-        <p>{body}</p>
-      </Link>
-    </div>
-  );
-}
-
-// HomePage component
-export default Dashboard;
+export default AnnouncementList;

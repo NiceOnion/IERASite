@@ -13,7 +13,6 @@ using System.Text;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -24,6 +23,14 @@ builder.Services.AddSingleton<RabbitMQUserConsumer>();
 builder.Services.AddSingleton<RabbitMQCommentConsumer>();
 
 var app = builder.Build();
+
+// Retrieve the credentials file path from environment variable
+var credentialsPath = Environment.GetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS");
+
+if (string.IsNullOrEmpty(credentialsPath))
+{
+    throw new InvalidOperationException("Google Cloud credentials file path is not set.");
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -52,5 +59,7 @@ app.Lifetime.ApplicationStopping.Register(() =>
 });
 
 app.Run();
+
+partial class Program { }
 
 partial class Program { }

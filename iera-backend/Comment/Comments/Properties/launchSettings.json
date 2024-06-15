@@ -1,0 +1,31 @@
+﻿{
+  "$schema": "http://json.schemastore.org/launchsettings.json",
+  "iisSettings": {
+    "windowsAuthentication": false,
+    "anonymousAuthentication": true,
+    "iisExpress": {
+      "applicationUrl": "http://localhost:40863",
+      "sslPort": 44383
+    }
+  },
+  "profiles": {
+    "Comments": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "launchUrl": "swagger",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "GOOGLE_APPLICATION_CREDENTIALS": "C:\\Users\\Julia\\source\\repos\\Firestore-Start\\Firestore-Start\\Secret\\ierasite-d02be-firebase-adminsdk-wvdhv-0d3db191be.json"
+      },
+      "dotnetRunMessages": true,
+      "applicationUrl": "https://localhost:32778;http://localhost:32779"
+    },
+    "IIS Express": {
+      "commandName": "IISExpress",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    }
+  }
+}
