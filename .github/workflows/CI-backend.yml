@@ -73,6 +73,11 @@ jobs:
           docker tag users:latest niceonion/ierasite:users-latest
           docker push niceonion/ierasite:users-latest
 
+      - name: Tag and Push comments
+        run: |    
+          docker tag comments:latest niceonion/ierasite:comments-latest
+          docker push niceonion/ierasite:comments-latest
+
   
   deploy:
       runs-on: ubuntu-latest
@@ -82,16 +87,8 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Create Google Cloud credentials file
-        run: |
-          echo "${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_BASE64 }}" | base64 --decode > $HOME/gcloud.json
-          cat $HOME/gcloud.json
-
-      - name: Authenticate with GCP
-        run: gcloud auth activate-service-account --key-file=$HOME/gcloud.json
-
-      - name: Configure Kubernetes
-        run: gcloud container clusters get-credentials my-cluster --zone my-zone --project my-project
+      - name: Start minikube
+        uses: medyagh/setup-minikube@master
 
       - name: Deploy to Kubernetes
         run: |
