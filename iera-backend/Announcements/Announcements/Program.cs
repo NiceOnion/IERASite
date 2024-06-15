@@ -1,14 +1,4 @@
-using Amazon.Util;
 using Announcements.Data;
-using Google.Cloud.Firestore;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using RabbitMQ.Client;
-using RabbitMQ.Client.Events;
-using System;
-using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
