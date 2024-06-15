@@ -1,30 +1,24 @@
+using Comments.Data;
 using Comments.Models;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using RabbitMQ.Client;
+using RabbitMQ.Client.Events;
 using System;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Retrieve the credentials file path from environment variable
-var credentialsPath = Environment.GetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS");
-
-if (string.IsNullOrEmpty(credentialsPath))
-{
-    throw new InvalidOperationException("Google Cloud credentials file path is not set.");
-}
-
-// Set GOOGLE_APPLICATION_CREDENTIALS environment variable
-Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", credentialsPath);
-
-// Add services to the container.
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// Register services
-builder.Services.AddTransient<ICommentRepository, CommentRepository>();
+builder.Services.Configure<MongoDBSettings>(builder.Configuration.GetSection("MongoDBSettings"));
+builder.Services.AddSingleton<IMongoDBContext, MongoDBContext>();
+builder.Services.AddScoped<ICommentRepository, CommentRepository>();
+builder.Services.AddSingleton<RabbitMQConsumer>();
 
 var app = builder.Build();
 
@@ -42,6 +36,15 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
+// Start RabbitMQ Consumer
+var rabbitMQConsumer = app.Services.GetRequiredService<RabbitMQConsumer>();
+
+// Graceful shutdown
+app.Lifetime.ApplicationStopping.Register(() =>
+{
+    rabbitMQConsumer.Close();
+});
 
 app.Run();
 
