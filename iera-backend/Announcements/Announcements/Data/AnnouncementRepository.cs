@@ -1,87 +1,65 @@
-using Google.Cloud.Firestore;
-using Google.Apis.Auth.OAuth2;
-using System.IO;
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using Google.Cloud.Firestore;
+using Microsoft.Extensions.DependencyInjection;
+using MongoDB.Bson;
+using MongoDB.Driver;
 
 namespace Announcements.Data
 {
     public class AnnouncementRepository : IAnnouncementRepository
     {
-        private FirestoreDb _db;
+        private readonly IMongoDBContext _context;
 
-        public AnnouncementRepository()
+
+        public AnnouncementRepository(IMongoDBContext context)
         {
-            string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Secret", "ierasite-d02be-firebase-adminsdk-wvdhv-0d3db191be.json");
-            Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", path);
-            _db = FirestoreDb.Create("ierasite-d02be");
+            _context = context;
         }
 
         public async Task<List<Announcement>> GetAllAnnouncements()
         {
-            CollectionReference usersCollection = _db.Collection("Announcements");
-            QuerySnapshot snapshot = await usersCollection.GetSnapshotAsync();
+            return await _context.Announcements.Find(_ => true).ToListAsync();
+        }
 
-            List<Announcement> users = new List<Announcement>();
-
-            foreach (DocumentSnapshot document in snapshot.Documents)
-            {
-                if (document.Exists)
-                {
-                    Announcement announcement = document.ConvertTo<Announcement>();
-                    users.Add(announcement);
-                }
-            }
-
-            return users;
+        public async Task<List<Announcement>> GetAllAnnouncementsByUser(string userId)
+        {
+            var filter = Builders<Announcement>.Filter.Eq(a => a.UserID, userId);
+            return await _context.Announcements.Find(filter).ToListAsync();
         }
 
         public async Task<Announcement> GetAnnouncement(string id)
         {
-            DocumentReference docRef = _db.Collection("Announcements").Document(id);
-            DocumentSnapshot snapshot = await docRef.GetSnapshotAsync();
-
-            if (snapshot.Exists)
-            {
-                Announcement user = snapshot.ConvertTo<Announcement>();
-                return user;
-            }
-            else
-            {
-                return null;
-            }
+            var filter = Builders<Announcement>.Filter.Eq(a => a.Id, id);
+            return await _context.Announcements.Find(filter).FirstOrDefaultAsync();
         }
 
-        public async Task<DocumentReference> AddAnnouncement(Announcement announcement)
+        public async Task AddAnnouncement(Announcement announcement)
         {
-            CollectionReference announcementRef = _db.Collection("Announcements");
-            DocumentReference newUserRef = await announcementRef.AddAsync(announcement);
-            return newUserRef;
+            announcement.Id = ObjectId.GenerateNewId().ToString();
+            await _context.Announcements.InsertOneAsync(announcement);
         }
 
         public async Task<bool> UpdateAnnouncement(Announcement announcement)
         {
-            DocumentReference docRef = _db.Collection("Announcements").Document(announcement.Id);
-            DocumentSnapshot snapshot = await docRef.GetSnapshotAsync();
-
-            if (snapshot.Exists)
-            {
-                await docRef.SetAsync(announcement, SetOptions.MergeAll);
-                return true;
-            }
-            return false;
+            var filter = Builders<Announcement>.Filter.Eq(a => a.Id, announcement.Id);
+            var result = await _context.Announcements.ReplaceOneAsync(filter, announcement);
+            return result.IsAcknowledged && result.ModifiedCount > 0;
         }
 
         public async Task<bool> DeleteAnnouncement(string id)
         {
-            DocumentReference docRef = _db.Collection("Announcements").Document(id);
-            DocumentSnapshot snapshot = await docRef.GetSnapshotAsync();
+            var filter = Builders<Announcement>.Filter.Eq(a => a.Id, id);
+            var result = await _context.Announcements.DeleteOneAsync(filter);
+            return result.IsAcknowledged && result.DeletedCount > 0;
+        }
 
-            if (snapshot.Exists)
-            {
-                await docRef.DeleteAsync();
-                return true;
-            }
-            return false;
+        public async void UpdateAnnouncementDeletedAccount(string userId)
+        {
+            var filter = Builders<Announcement>.Filter.Eq(a => a.UserID, userId);
+            var update = Builders<Announcement>.Update.Set(a => a.UserID, "User removed");
+
+            var result = await _context.Announcements.UpdateManyAsync(filter, update);
         }
     }
 }

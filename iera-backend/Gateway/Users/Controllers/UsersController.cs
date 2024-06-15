@@ -1,8 +1,11 @@
-﻿// UsersController.cs
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Net.Http;
+using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Bson;
+using MongoDB.Bson.IO;
 using MongoDB.Driver;
 using Users.Models;
 
@@ -11,10 +14,14 @@ using Users.Models;
 public class UsersController : ControllerBase
 {
     private readonly IMongoCollection<User> _usersCollection;
+    private RabbitMQPublisher rabbitMQPublisher;
+    private readonly HttpClient _httpClient;
 
-    public UsersController(MongoDBContext dbContext)
+    public UsersController(IMongoDBContext dbContext)
     {
         _usersCollection = dbContext.Users;
+        rabbitMQPublisher = new RabbitMQPublisher();
+        _httpClient = new HttpClient();
     }
 
     [HttpGet]
@@ -24,16 +31,41 @@ public class UsersController : ControllerBase
         return Ok(users);
     }
 
-    [HttpPost]
-    public async Task<ActionResult<User>> CreateUser(User user)
+    [HttpGet("{id}")]
+    public async Task<ActionResult<User>> GetUserById(string id)
     {
-        // Ensure the Id property is initialized properly
-        user.Id = ObjectId.GenerateNewId().ToString();
-
-        await _usersCollection.InsertOneAsync(user);
-        return CreatedAtAction(nameof(GetUsers), new { id = user.Id }, user);
+        var user = await _usersCollection.Find(u => u.Id == id).FirstOrDefaultAsync();
+        if (user == null)
+        {
+            return NotFound();
+        }
+        return Ok(user);
     }
 
+    [HttpPost]
+    public async Task CreateUserAsync(User user)
+    {
+        try
+        {
+            string jsonString = JsonSerializer.Serialize(user);
+            var content = new StringContent(jsonString, Encoding.UTF8, "application/json");
+
+            HttpResponseMessage response = await _httpClient.PostAsync(
+                "https://us-central1-ierawebsite-426320.cloudfunctions.net/UserSignUp",
+                content);
+            Console.WriteLine("Sent request");
+            Console.WriteLine(response.Content);
+
+            response.EnsureSuccessStatusCode(); // Throw if not successful
+
+            string responseBody = await response.Content.ReadAsStringAsync();
+            Console.WriteLine(responseBody); // Handle response as needed
+        }
+        catch (HttpRequestException e)
+        {
+            Console.WriteLine($"Error creating user: {e.Message}");
+        }
+    }
 
     [HttpPut("{id}")]
     public async Task<IActionResult> UpdateUser(string id, User user)
@@ -51,6 +83,12 @@ public class UsersController : ControllerBase
         var result = await _usersCollection.DeleteOneAsync(user => user.Id == id);
         if (result.DeletedCount == 0)
             return NotFound();
+
+        // Publish user delete event to RabbitMQ
+        
+        rabbitMQPublisher.SendMessage(id);
+        rabbitMQPublisher.Close();
+
         return Ok();
     }
 }

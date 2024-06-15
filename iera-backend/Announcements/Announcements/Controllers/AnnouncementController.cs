@@ -1,9 +1,9 @@
-using Announcements.Data;
-using Google.Cloud.Firestore;
-using Google.Cloud.Firestore.V1;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Announcements.Data;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Announcements.Controllers
 {
@@ -11,62 +11,75 @@ namespace Announcements.Controllers
     [ApiController]
     public class AnnouncementController : ControllerBase
     {
-        private readonly IAnnouncementRepository _announcementrepository;
-        public AnnouncementController(IAnnouncementRepository announcementrepo){
-            _announcementrepository = announcementrepo;
+        private readonly IAnnouncementRepository _announcementRepository;
+
+        public AnnouncementController(IAnnouncementRepository announcementRepository)
+        {
+            _announcementRepository = announcementRepository ?? throw new ArgumentNullException(nameof(announcementRepository));
         }
 
-
-        [HttpGet]
-        [Route("All")]
+        [HttpGet("All")]
         public async Task<ActionResult<List<Announcement>>> GetAllAnnouncements()
-        {    
-            List<Announcement> Announcements =  await _announcementrepository.GetAllAnnouncements();
-            return Ok(Announcements);
+        {
+            try
+            {
+                List<Announcement> announcements = await _announcementRepository.GetAllAnnouncements();
+                return Ok(announcements);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal Server Error: {ex.Message}");
+            }
         }
 
-        [HttpGet]
-        [Route("{id}")]
+        [HttpGet("{id}")]
         public async Task<ActionResult<Announcement>> GetAnnouncement(string id)
         {
-            Announcement announcement = await _announcementrepository.GetAnnouncement(id);
-            if(announcement == null)
+            try
             {
-                return NotFound();
+                Announcement announcement = await _announcementRepository.GetAnnouncement(id);
+                if (announcement == null)
+                {
+                    return NotFound();
+                }
+                return Ok(announcement);
             }
-            return Ok(announcement);
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal Server Error: {ex.Message}");
+            }
         }
 
         [HttpPost]
         public async Task<ActionResult<Announcement>> AddAnnouncement([FromBody] Announcement announcement)
         {
-            if(announcement == null)
+            if (announcement == null)
             {
-                return BadRequest("User is null");
+                return BadRequest("Announcement is null");
             }
 
             try
             {
-                DocumentReference docRef = await _announcementrepository.AddAnnouncement(announcement);
-                return CreatedAtAction(nameof(GetAnnouncement), new { id = docRef.Id }, announcement);
+                await _announcementRepository.AddAnnouncement(announcement);
+                return CreatedAtAction(nameof(GetAnnouncement), new { id = announcement.Id }, announcement);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return StatusCode(500, $"Internal Server Error: {ex.Message}");
             }
         }
 
         [HttpPut]
-        public async Task<IActionResult> UpdateAnnouncement ([FromBody] Announcement announcement)
+        public async Task<IActionResult> UpdateAnnouncement([FromBody] Announcement announcement)
         {
             if (announcement == null)
             {
-                return BadRequest("User is null");
+                return BadRequest("Announcement is null");
             }
 
             try
             {
-                bool updated = await _announcementrepository.UpdateAnnouncement(announcement);
+                bool updated = await _announcementRepository.UpdateAnnouncement(announcement);
                 if (!updated)
                 {
                     return NotFound();
@@ -80,13 +93,12 @@ namespace Announcements.Controllers
             }
         }
 
-        [HttpDelete]
-        [Route("{id}")]
-        public async Task<IActionResult> DeleteAnnouncement (string id)
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteAnnouncement(string id)
         {
             try
             {
-                bool deleted = await _announcementrepository.DeleteAnnouncement(id);
+                bool deleted = await _announcementRepository.DeleteAnnouncement(id);
                 if (!deleted)
                 {
                     return NotFound();
@@ -95,7 +107,7 @@ namespace Announcements.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                return StatusCode(500, $"Internal Server Error: {ex.Message}");
             }
         }
     }
