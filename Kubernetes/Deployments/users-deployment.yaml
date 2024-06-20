@@ -16,7 +16,7 @@ spec:
       - name: users
         image: niceonion/ierasite:users-latest
         ports:
-        - containerPort: 32773
+        - containerPort: 32776
         resources:
           requests:
             cpu: "100m"
