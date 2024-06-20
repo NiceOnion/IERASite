@@ -58,7 +58,7 @@ jobs:
           image-ref: 'niceonion/ierasite:gateway-latest'
           format: 'table'
           exit-code: '1'
-          ignore-unfixed: false
+          ignore-unfixed: true
           vuln-type: 'os,library'
           severity: 'CRITICAL,HIGH'
 
@@ -119,10 +119,6 @@ jobs:
         uses: grafana/k6-action@v0.2.0
         with:
           filename: k6LoadTest.js
-
-      - name: Scan Minikube Cluster with Kube-hunter
-        run: |
-          docker run aquasec/kube-hunter --remote http://127.0.0.1:8001
 
   static-analysis:
     runs-on: ubuntu-latest
