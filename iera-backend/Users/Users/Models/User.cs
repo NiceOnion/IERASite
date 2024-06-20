@@ -9,9 +9,14 @@ namespace Users.Models
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
         public string? Id { get; set; }
-        public string? Name { get; set; }
-        public string? Email { get; set; }
-        public string? Password { get; set; }
+        [BsonElement("username")]
+        public string? username { get; set; }
+        [BsonElement("email")]
+        public string? email { get; set; }
+        [BsonElement("password")]
+        public string? password { get; set; }
+        [BsonElement("BirthDate")]
+        [BsonDateTimeOptions(Kind = DateTimeKind.Utc)]
         public DateTime? BirthDate { get; set; }
     }
 }

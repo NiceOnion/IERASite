@@ -50,7 +50,7 @@ public class UsersControllerTests
     {
         // Arrange
         var userId = ObjectId.GenerateNewId().ToString();
-        var user = new User { Id = userId, Name = "Updated User", Email = "updated@example.com" };
+        var user = new User { Id = userId, username = "Updated User", email = "updated@example.com" };
         var updateResult = new ReplaceOneResult.Acknowledged(1, 1, userId);
 
         _mockCollection
