@@ -102,14 +102,11 @@ jobs:
           kubectl apply -f Kubernetes/HPA/hpa-announcements.yaml
           kubectl apply -f Kubernetes/HPA/hpa-users.yaml
 
-      - name: Wait for service to be ready
-        run: |
-          while [[ $(minikube kubectl -- get pods -l app=your-app-label -o jsonpath='{.items[*].status.containerStatuses[*].ready}') != "true" ]]; do echo "waiting for pod" && sleep 5; done
-  
       - name: Start Minikube Tunnel (background)
         run: |
           nohup minikube tunnel > /dev/null 2>&1 &
           sleep 10  # Give the tunnel some time to establish
+
         
       - name: Run local k6 test
         uses: grafana/k6-action@v0.2.0
