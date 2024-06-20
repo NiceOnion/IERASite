@@ -1,6 +1,5 @@
 // using Announcements.Controllers;
 // using Announcements.Data;
-// using Google.Cloud.Firestore;
 // using Microsoft.AspNetCore.Mvc;
 // using System.Collections.Generic;
 // using System.Threading.Tasks;
